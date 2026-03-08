@@ -76,37 +76,36 @@ export function renderHome() {
       baseRotation = (Math.random() - 0.5) * 10;
     }
 
-    const hasPhone = Math.random() > 0.3;
+    const isReaching = Math.random() > 0.3; // 70% hold arms up
+
     // ~70% tracking, 30% static eyes
     const trackingClass = Math.random() > 0.3 ? 'tracking-eyes' : 'static-eyes';
 
     // Asynchronous animation variables
     const idleDelay = -(Math.random() * 4).toFixed(2); // Negative delay starts animation immediately at random point
-    const pulseWait = (4 + Math.random() * 4).toFixed(2); // 4-8s interval
     const blinkWait = (3 + Math.random() * 5).toFixed(2); // 3-8s interval
 
     // Strict SVG paths for specific reference styling Look
-    // Circle Head
-    const headMarkup = `<circle cx="50" cy="35" r="22" fill="#000000"/>`;
-    // Rounded shoulders body
-    const bodyMarkup = `<path d="M 20 150 L 20 100 Q 20 65 50 65 Q 80 65 80 100 L 80 150 Z" fill="#000000"/>`;
+    // Circle Head floats slightly
+    const headMarkup = `<circle cx="50" cy="30" r="18" fill="#000000"/>`;
 
-    // Left-facing phone (for right side silhouettes holding in left arm)
-    // Arm arches up
-    const phoneLeft = `
-      <path d="M 80 110 Q 95 90 70 70" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
-      <rect x="55" y="55" width="12" height="24" rx="2" fill="#111" transform="rotate(-15, 60, 65)"/>
-      <circle cx="62" cy="65" r="2" fill="#fff" class="phone-pulse" style="--pulse-wait: ${pulseWait}s" opacity="0"/>
-    `;
+    // Hand-drawn style paths
+    // Base moving shoulders (solid fill)
+    let bodyMarkup = `<path d="M 15 150 L 15 80 Q 15 45 50 45 Q 85 45 85 80 L 85 150 Z" fill="#000000"/>`;
+    let armMarkup = '';
 
-    // Right-facing phone (for left side silhouettes holding in right arm)
-    const phoneRight = `
-      <path d="M 20 110 Q 5 90 30 70" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
-      <rect x="33" y="55" width="12" height="24" rx="2" fill="#111" transform="rotate(15, 40, 65)"/>
-      <circle cx="38" cy="65" r="2" fill="#fff" class="phone-pulse" style="--pulse-wait: ${pulseWait}s" opacity="0"/>
-    `;
-
-    const phonePath = isLeft ? phoneRight : phoneLeft;
+    if (isReaching) {
+      if (isLeft) {
+        // Reaching towards right (arm extends from left side)
+        armMarkup = `<path d="M 25 75 Q 60 -10 120 40" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round"/>`;
+      } else {
+        // Reaching towards left (arm extends from right side)
+        armMarkup = `<path d="M 75 75 Q 40 -10 -20 40" fill="none" stroke="#000000" stroke-width="20" stroke-linecap="round"/>`;
+      }
+    } else {
+      // Just shoulders, maybe slightly wider
+      bodyMarkup = `<path d="M 5 150 L 5 80 Q 5 50 50 50 Q 95 50 95 80 L 95 150 Z" fill="#000000"/>`;
+    }
 
     // Eye positions matching new circle head setup
     const eyeOffsetX = isLeft ? 3 : -3;
@@ -114,19 +113,18 @@ export function renderHome() {
     return `
       <div class="silhouette-wrap ${depthClass} idle-float" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); bottom: ${bottomPos}%; width: ${size}px; z-index: ${Math.floor(size)}; --idle-del: ${idleDelay}s;">
         <div class="sil-inner" style="transform: rotate(${baseRotation}deg); width: 100%; height: 100%;">
-          <svg viewBox="0 0 100 150" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="overflow: visible;">
+          <svg viewBox="-30 0 160 150" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="overflow: visible;">
+            <!-- Arm behind body -->
+            ${armMarkup}
             <!-- Torso & Head -->
-            ${headMarkup}
             ${bodyMarkup}
+            ${headMarkup}
             
             <!-- Eyes -->
-            <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 35">
-              <circle cx="${45 + eyeOffsetX}" cy="32" r="2.5" fill="#ffffff"/>
-              <circle cx="${55 + eyeOffsetX}" cy="32" r="2.5" fill="#ffffff"/>
+            <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 30">
+              <circle cx="${45 + eyeOffsetX}" cy="28" r="2.5" fill="#ffffff"/>
+              <circle cx="${55 + eyeOffsetX}" cy="28" r="2.5" fill="#ffffff"/>
             </g>
-
-            <!-- Arm holding phone -->
-            ${hasPhone ? `<g class="sil-phone">${phonePath}</g>` : ''}
           </svg>
         </div>
       </div>
