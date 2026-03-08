@@ -52,98 +52,139 @@ export function renderHome() {
       sizeBase = 200; sizeVar = 70;
     }
 
-    const size = sizeBase + Math.random() * sizeVar;
+    let size = sizeBase + Math.random() * sizeVar;
+    let leftPos, bottomPos, isLeft = true, baseRotation = 0, charType = 0;
 
-    // Distribute left, right, bottom more deliberately to keep center safe area
-    let leftPos, bottomPos, isLeft, baseRotation = 0;
-    if (i < 5) {
-      // Left side leaning right
-      leftPos = Math.random() * 15 - 5; // -5% to 10%
-      bottomPos = Math.random() * 30 - 15;
-      isLeft = true;
-      baseRotation = 5 + Math.random() * 10;
-    } else if (i < 10) {
-      // Right side leaning left
-      leftPos = 85 + Math.random() * 15; // 85% to 100%
-      bottomPos = Math.random() * 30 - 15;
-      isLeft = false;
-      baseRotation = -5 - Math.random() * 10;
+    // Hardcode desktop layout to match exact composition
+    if (window.innerWidth > 768) {
+      if (i === 0) { leftPos = -2; bottomPos = 55; isLeft = true; baseRotation = 10; size = 280; charType = 2; }
+      else if (i === 1) { leftPos = -5; bottomPos = 20; isLeft = true; baseRotation = 5; size = 240; charType = 2; }
+      else if (i === 2) { leftPos = 8; bottomPos = 5; isLeft = true; baseRotation = 0; size = 200; charType = 1; }
+      else if (i === 3) { leftPos = -3; bottomPos = -15; isLeft = true; baseRotation = -5; size = 280; charType = 0; }
+      else if (i === 4) { leftPos = 12; bottomPos = -20; isLeft = true; baseRotation = 8; size = 220; charType = 0; }
+      else if (i === 5) { leftPos = 95; bottomPos = 60; isLeft = false; baseRotation = -10; size = 240; charType = 1; }
+      else if (i === 6) { leftPos = 98; bottomPos = 25; isLeft = false; baseRotation = -5; size = 270; charType = 1; }
+      else if (i === 7) { leftPos = 85; bottomPos = -5; isLeft = false; baseRotation = -15; size = 260; charType = 2; }
+      else if (i === 8) { leftPos = 82; bottomPos = -20; isLeft = false; baseRotation = -5; size = 300; charType = 0; }
+      else if (i === 9) { leftPos = 95; bottomPos = -25; isLeft = false; baseRotation = -10; size = 230; charType = 0; }
+      else if (i === 10) { leftPos = 35; bottomPos = -25; isLeft = true; baseRotation = -15; size = 260; charType = 0; }
+      else if (i === 11) { leftPos = 48; bottomPos = -20; isLeft = true; baseRotation = 8; size = 210; charType = 0; }
+      else if (i === 12) { leftPos = 65; bottomPos = -22; isLeft = false; baseRotation = -28; size = 250; charType = 0; }
+      else { leftPos = 70; bottomPos = -35; isLeft = false; baseRotation = 2; size = 190; charType = 0; }
     } else {
-      // Bottom center-ish leaning slightly
-      leftPos = 20 + Math.random() * 60; // 20% to 80%
-      bottomPos = -20 - Math.random() * 5; // strictly bottom
-      isLeft = leftPos < 50;
-      baseRotation = (Math.random() - 0.5) * 10;
+      // Mobile fallback semi-random
+      if (i < 3) { leftPos = 2; bottomPos = Math.random() * 20; isLeft = true; charType = 1; size = 180; }
+      else if (i < 6) { leftPos = 88; bottomPos = Math.random() * 20; isLeft = false; charType = 2; size = 180; }
+      else { leftPos = 20 + Math.random() * 60; bottomPos = -15; isLeft = leftPos < 50; charType = 0; size = 200; }
     }
 
-    const isReaching = Math.random() > 0.3; // 70% hold arms up
-
-    // ~70% tracking, 30% static eyes
     const trackingClass = Math.random() > 0.3 ? 'tracking-eyes' : 'static-eyes';
+    const idleDelay = -(Math.random() * 4).toFixed(2);
+    const blinkWait = (3 + Math.random() * 5).toFixed(2);
 
-    // Asynchronous animation variables
-    const idleDelay = -(Math.random() * 4).toFixed(2); // Negative delay starts animation immediately at random point
-    const blinkWait = (3 + Math.random() * 5).toFixed(2); // 3-8s interval
+    let innerSvg = '';
 
-    // Zombie / Phone style
-    // Head looks slightly forward/down
-    const headMarkup = `<path d="M 60 40 Q 75 35 70 20 Q 55 5 40 10 Q 30 20 40 35 Q 50 45 60 40" fill="#000000"/>`;
+    // Eyeballs logic - intentionally slightly different sizes for the "zombie" derp look
+    const eyeSize1 = 2 + Math.random() * 2; // 2 to 4
+    const eyeSize2 = 1.5 + Math.random() * 1.5; // 1.5 to 3
 
-    // Hunched shoulders pointing inward 
-    let bodyMarkup = '';
-    let armMarkup = '';
+    if (charType === 0) {
+      // Bottom reacher (Hunched up, arm straight up)
+      const eyeOffset = isLeft ? 10 : -10;
+      innerSvg = `
+          <!-- Hunched Body -->
+          <path d="M 10 170 Q 15 80 50 50 Q 85 80 90 170 Z" fill="#000000"/>
+          <!-- Head looking up/inward -->
+          <circle cx="50" cy="40" r="22" fill="#000000"/>
+          
+          <!-- Arm -->
+          <path d="M 50 60 Q ${isLeft ? 110 : -10} 20 ${isLeft ? 90 : 10} -40" fill="none" stroke="#000000" stroke-width="18" stroke-linecap="round"/>
+          
+          <!-- Phone at end of arm -->
+          <g transform="translate(${isLeft ? 80 : -5}, -65) rotate(${isLeft ? 15 : -15})">
+            <!-- phone -->
+            <rect x="0" y="0" width="20" height="35" rx="2" fill="#222" stroke="#000000" stroke-width="3"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" opacity="0.8"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
+            <!-- Nubby fingers wrapping bottom -->
+            <ellipse cx="10" cy="35" rx="12" ry="6" fill="#000000"/>
+          </g>
+          
+          <!-- Eyes -->
+          <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 40">
+            <circle cx="${45 + eyeOffset}" cy="35" r="${eyeSize1}" fill="#ffffff"/>
+            <circle cx="${55 + eyeOffset}" cy="38" r="${eyeSize2}" fill="#ffffff"/>
+          </g>
+        `;
+    } else if (charType === 1) {
+      // Side Snout (Peanut head, arm reaching sideways)
+      const dBody = isLeft ? "M -30 150 Q -10 90 20 70 Q 50 90 50 150 Z" : "M 130 150 Q 110 90 80 70 Q 50 90 50 150 Z";
+      const dHead = isLeft ? "M 10 90 Q 5 60 25 50 Q 50 40 65 60 Q 80 75 55 85 Q 35 95 10 90 Z" : "M 90 90 Q 95 60 75 50 Q 50 40 35 60 Q 20 75 45 85 Q 65 95 90 90 Z";
+      const dArm = isLeft ? "M 20 90 Q 60 80 100 40" : "M 80 90 Q 40 80 0 40";
 
-    if (isLeft) {
-      // Reaching right (on the left side of screen)
-      bodyMarkup = `<path d="M -10 150 Q 10 70 45 50 Q 70 75 75 150 Z" fill="#000000"/>`;
-      armMarkup = `
-        <path d="M 40 60 Q 60 -10 110 30" fill="none" stroke="#000000" stroke-width="22" stroke-linecap="round"/>
-        <!-- Phone screen -->
-        <g transform="translate(90, 10) rotate(-15)">
-            <!-- Phone casing -->
-            <rect x="0" y="0" width="22" height="38" rx="2" fill="#222" stroke="#000000" stroke-width="4"/>
-            <!-- Static white screen -->
-            <rect x="3" y="3" width="16" height="32" rx="1" fill="#ffffff" opacity="0.8"/>
-            <!-- Glowing pulse layer -->
-            <rect x="3" y="3" width="16" height="32" rx="1" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
-        </g>
-      `;
+      innerSvg = `
+          <!-- Body -->
+          <path d="${dBody}" fill="#000000"/>
+          <!-- Snout Head -->
+          <path d="${dHead}" fill="#000000"/>
+          
+          <!-- Arm -->
+          <path d="${dArm}" fill="none" stroke="#000000" stroke-width="16" stroke-linecap="round"/>
+          
+          <!-- Phone at end of arm -->
+          <g transform="translate(${isLeft ? 90 : -10}, 15) rotate(${isLeft ? 25 : -25})">
+            <!-- phone -->
+            <rect x="0" y="0" width="20" height="35" rx="2" fill="#222" stroke="#000000" stroke-width="3"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" opacity="0.8"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
+            <!-- Nubby fingers wrapping bottom -->
+            <ellipse cx="10" cy="35" rx="12" ry="6" fill="#000000"/>
+          </g>
+          
+          <!-- Eyes -->
+          <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 40">
+            <circle cx="${isLeft ? 45 : 55}" cy="60" r="${eyeSize1}" fill="#ffffff"/>
+            <circle cx="${isLeft ? 55 : 45}" cy="65" r="${eyeSize2}" fill="#ffffff"/>
+          </g>
+        `;
     } else {
-      // Reaching left (on the right side of screen)
-      bodyMarkup = `<path d="M 110 150 Q 90 70 55 50 Q 30 75 25 150 Z" fill="#000000"/>`;
-      armMarkup = `
-        <path d="M 60 60 Q 40 -10 -10 30" fill="none" stroke="#000000" stroke-width="22" stroke-linecap="round"/>
-        <!-- Phone screen -->
-        <g transform="translate(-15, 15) rotate(15)">
-            <!-- Phone casing -->
-            <rect x="0" y="0" width="22" height="38" rx="2" fill="#222" stroke="#000000" stroke-width="4"/>
-            <!-- Static white screen -->
-            <rect x="3" y="3" width="16" height="32" rx="1" fill="#ffffff" opacity="0.8"/>
-            <!-- Glowing pulse layer -->
-            <rect x="3" y="3" width="16" height="32" rx="1" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
-        </g>
-      `;
-    }
+      // Side Gobbler (Big head, mouth gap, close phone)
+      const dBody = isLeft ? "M -30 150 Q 0 80 40 70 Q 70 90 70 150 Z" : "M 130 150 Q 100 80 60 70 Q 30 90 30 150 Z";
+      // Gobbler head has a snout that splits into a mouth
+      const dHead = isLeft ? "M 20 80 Q 20 30 60 30 Q 95 30 100 50 Q 105 60 85 65 Q 105 75 95 85 Q 70 100 40 90 Z" : "M 80 80 Q 80 30 40 30 Q 5 30 0 50 Q -5 60 15 65 Q -5 75 5 85 Q 30 100 60 90 Z";
 
-    // Eye positions matching hunched head
-    const eyeOffsetX = isLeft ? 12 : -8;
-    const eyeOffsetY = -5;
+      innerSvg = `
+          <!-- Body -->
+          <path d="${dBody}" fill="#000000"/>
+          <!-- Gobbler Head -->
+          <path d="${dHead}" fill="#000000"/>
+          
+          <!-- Phone held close to face -->
+          <g transform="translate(${isLeft ? 90 : -10}, 45) rotate(${isLeft ? -10 : 10})">
+            <!-- Arm reaching from body -->
+            <path d="M ${isLeft ? -40 : 40} 40 Q ${isLeft ? -10 : 10} 50 10 35" fill="none" stroke="#000000" stroke-width="16" stroke-linecap="round"/>
+            
+            <!-- phone -->
+            <rect x="0" y="0" width="20" height="35" rx="2" fill="#222" stroke="#000000" stroke-width="3"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" opacity="0.8"/>
+            <rect x="2" y="2" width="16" height="31" rx="1" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
+            <!-- Nubby fingers wrapping bottom right over the mouth gap -->
+            <ellipse cx="10" cy="35" rx="12" ry="8" fill="#000000"/>
+          </g>
+          
+          <!-- Eyes -->
+          <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 40">
+            <circle cx="${isLeft ? 60 : 40}" cy="50" r="${eyeSize1}" fill="#ffffff"/>
+            <circle cx="${isLeft ? 75 : 25}" cy="55" r="${eyeSize2}" fill="#ffffff"/>
+          </g>
+        `;
+    }
 
     return `
       <div class="silhouette-wrap ${depthClass} idle-float" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); bottom: ${bottomPos}%; width: ${size}px; z-index: ${Math.floor(size)}; --idle-del: ${idleDelay}s;">
         <div class="sil-inner" style="transform: rotate(${baseRotation}deg); width: 100%; height: 100%;">
-          <svg viewBox="-30 -20 160 170" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="overflow: visible;">
-            <!-- Arm behind body -->
-            ${armMarkup}
-            <!-- Torso & Head -->
-            ${bodyMarkup}
-            ${headMarkup}
-            
-            <!-- Eyes -->
-            <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 30">
-              <circle cx="${45 + eyeOffsetX}" cy="${28 + eyeOffsetY}" r="3" fill="#ffffff"/>
-              <circle cx="${55 + eyeOffsetX}" cy="${28 + eyeOffsetY}" r="3" fill="#ffffff"/>
-            </g>
+          <svg viewBox="-30 -30 160 190" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="overflow: visible;">
+            ${innerSvg}
           </svg>
         </div>
       </div>
