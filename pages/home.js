@@ -37,50 +37,84 @@ const services = [
 ];
 
 export function renderHome() {
-  const silhouettes = Array.from({ length: 12 }).map((_, i) => {
+  const silhouettes = Array.from({ length: 14 }).map((_, i) => {
     // 3 depth layers
     let depthClass = '';
-    let sizeBase = 0;
-    let sizeVar = 0;
+    let sizeBase, sizeVar;
     if (i % 3 === 0) {
       depthClass = 'depth-back';
-      sizeBase = 100; sizeVar = 50;
+      sizeBase = 90; sizeVar = 40;
     } else if (i % 3 === 1) {
       depthClass = 'depth-mid';
-      sizeBase = 160; sizeVar = 60;
+      sizeBase = 140; sizeVar = 50;
     } else {
       depthClass = 'depth-front';
-      sizeBase = 240; sizeVar = 80;
+      sizeBase = 200; sizeVar = 70;
     }
 
     const size = sizeBase + Math.random() * sizeVar;
-    // Distribute more evenly, ensuring edge elements for Scene 2
-    const leftPos = (i / 11) * 90 + 5;
-    const hasPhone = Math.random() > 0.4;
+
+    // Distribute left, right, bottom more deliberately to keep center safe area
+    let leftPos, bottomPos, isLeft;
+    if (i < 5) {
+      // Left side
+      leftPos = Math.random() * 20 - 5; // -5% to 15%
+      bottomPos = Math.random() * 40 - 15;
+      isLeft = true;
+    } else if (i < 10) {
+      // Right side
+      leftPos = 85 + Math.random() * 20; // 85% to 105%
+      bottomPos = Math.random() * 40 - 15;
+      isLeft = false;
+    } else {
+      // Bottom center-ish
+      leftPos = 20 + Math.random() * 60; // 20% to 80%
+      bottomPos = -20 - Math.random() * 10; // strictly bottom
+      isLeft = leftPos < 50;
+    }
+
+    const hasPhone = Math.random() > 0.3;
     // ~70% tracking, 30% static eyes
     const trackingClass = Math.random() > 0.3 ? 'tracking-eyes' : 'static-eyes';
 
+    // SVG paths based on direction
+    const headPath = `M50 45 a 20 20 0 1 0 0 -40 a 20 20 0 0 0 0 40 z`;
+    const bodyPath = `M15 150 V 90 Q 15 65 50 65 Q 85 65 85 90 V 150 Z`;
+
+    // Left-facing phone (for right side silhouettes)
+    const phoneLeft = `
+      <path d="M75 90 Q85 110 55 125 L35 100" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+      <rect x="30" y="90" width="10" height="20" rx="2" fill="#222" transform="rotate(-20, 35, 100)"/>
+      <circle cx="35" cy="95" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+    `;
+
+    // Right-facing phone (for left side silhouettes)
+    const phoneRight = `
+      <path d="M25 90 Q15 110 45 125 L65 100" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+      <rect x="60" y="90" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 65, 100)"/>
+      <circle cx="65" cy="95" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+    `;
+
+    const phonePath = isLeft ? phoneRight : phoneLeft;
+
+    // Eye positions - shift slightly based on facing
+    const eyeOffsetX = isLeft ? 4 : -4;
+
     return `
-      <div class="silhouette-wrap ${depthClass}" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); width: ${size}px; z-index: ${Math.floor(size)};">
-        <svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet">
+      <div class="silhouette-wrap ${depthClass}" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); bottom: ${bottomPos}%; width: ${size}px; z-index: ${Math.floor(size)};">
+        <svg viewBox="0 0 100 150" preserveAspectRatio="xMidYMax meet">
           <!-- Torso & Head -->
-          <path d="M50 50a20 20 0 1 0 0-40 20 20 0 0 0 0 40z" fill="#000000"/>
-          <path d="M25 180V100a25 25 0 0 1 50 0v80H25z" fill="#000000"/>
+          <path d="${headPath}" fill="#000000"/>
+          <path d="${bodyPath}" fill="#000000"/>
           
           <!-- Eyes -->
           <g class="sil-eyes ${trackingClass}" opacity="0">
-            <circle cx="43" cy="35" r="2.5" fill="#ffffff"/>
-            <circle cx="57" cy="35" r="2.5" fill="#ffffff"/>
+            <circle cx="${43 + eyeOffsetX}" cy="25" r="2.5" fill="#ffffff"/>
+            <circle cx="${57 + eyeOffsetX}" cy="25" r="2.5" fill="#ffffff"/>
           </g>
 
           <!-- Arm holding phone -->
-          ${hasPhone ? `
-          <g class="sil-phone">
-            <path d="M25 100 Q10 120 40 140 L60 110" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
-            <rect x="55" y="100" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 60, 110)"/>
-            <circle cx="60" cy="105" r="2" fill="#fff" class="phone-flash" opacity="0"/>
-          </g>
-          ` : ''}
+          ${hasPhone ? `<g class="sil-phone">${phonePath}</g>` : ''}
         </svg>
       </div>
     `;
@@ -116,20 +150,31 @@ export function renderHome() {
         </div>
         
         <div class="global-layer tools-layer" id="toolsLayer">
-           <svg class="scene3-icon" style="top: 20%; left: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M4 6h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2zm8 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3z"/></svg>
-           <svg class="scene3-icon" style="top: 15%; right: 22%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
-           <svg class="scene3-icon" style="top: 35%; left: 35%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M13 5.83l1.88 1.88c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-3.59-3.59c-.39-.39-1.02-.39-1.41 0L7.71 6.3c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 5.83V20c0 .55.45 1 1 1s1-.45 1-1V5.83z"/></svg>
-           <svg class="scene3-icon" style="top: 40%; right: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-           <svg class="scene3-icon" style="top: 25%; left: 45%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-           <svg class="scene3-icon" style="top: 50%; right: 40%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-           <svg class="scene3-icon" style="top: 15%; right: 50%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+           <!-- Top Left -->
+           <svg class="scene3-icon" style="top: 15%; left: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M4 6h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2zm8 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3z"/></svg>
+           <svg class="scene3-icon" style="top: 25%; left: 30%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+           <!-- Mid Left -->
+           <svg class="scene3-icon" style="top: 45%; left: 12%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M13 5.83l1.88 1.88c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-3.59-3.59c-.39-.39-1.02-.39-1.41 0L7.71 6.3c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 5.83V20c0 .55.45 1 1 1s1-.45 1-1V5.83z"/></svg>
+           <svg class="scene3-icon" style="top: 60%; left: 24%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+           <!-- Bottom Left -->
+           <svg class="scene3-icon" style="top: 78%; left: 16%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+           <div class="scene3-icon text-icon" style="top: 85%; left: 32%; display: grid; place-items: center; font-size: 1.5rem; font-weight: bold; color: var(--green);">#</div>
+
+           <!-- Top Right -->
+           <svg class="scene3-icon" style="top: 18%; right: 20%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+           <svg class="scene3-icon" style="top: 30%; right: 35%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+           <!-- Mid Right -->
+           <svg class="scene3-icon" style="top: 48%; right: 15%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+           <svg class="scene3-icon" style="top: 58%; right: 28%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.1L7.1 4.3 9.7 7l-1.4 1.4-2.7-2.7L3.1 8c-1.3 2.4-.9 5.4 1.1 7.4 1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l1.1-1.1c.4-.4.4-1.1 0-1.5zM10 12.5c-1.4 1.4-3.6 1.4-5 0s-1.4-3.6 0-5 3.6-1.4 5 0 1.4 3.6 0 5z"/></svg>
+           <!-- Bottom Right -->
+           <svg class="scene3-icon" style="top: 75%; right: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+           <svg class="scene3-icon" style="top: 85%; right: 35%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
         </div>
 
         <div class="global-layer graph-layer" id="graphLayer">
           <svg viewBox="0 0 1000 300" preserveAspectRatio="none" style="width: 100%; height: 300px; max-width: 1200px; margin: 0 auto; overflow: visible;">
-             <path class="trend-line" id="trendLine" d="M -50 50 L 150 100 L 300 60 L 500 160 L 700 120 L 950 250" stroke="#d32f2f" stroke-width="8" stroke-linejoin="round" fill="none" stroke-linecap="round"/>
-             <path class="trend-glow" d="M -50 50 L 150 100 L 300 60 L 500 160 L 700 120 L 950 250" stroke="#d32f2f" stroke-width="24" opacity="0.15" stroke-linejoin="round" fill="none" stroke-linecap="round"/>
-             <path id="trendArrow" d="M 910 230 L 950 250 L 920 270" stroke="#d32f2f" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" fill="none" opacity="0"/>
+             <path class="trend-line" id="trendLine" d="M -50 20 L 150 120 L 300 80 L 500 200 L 700 160 L 950 320" stroke="#d32f2f" stroke-width="12" stroke-linejoin="round" fill="none" stroke-linecap="round"/>
+             <path id="trendArrow" d="M 890 280 L 950 320 L 910 340" stroke="#d32f2f" stroke-width="12" stroke-linejoin="round" stroke-linecap="round" fill="none" opacity="0"/>
           </svg>
         </div>
 
@@ -141,11 +186,13 @@ export function renderHome() {
           
           <!-- SCENE 2: ATTENTION IS RARE -->
           <div class="story-scene scene-2">
-            <h2 class="story-line text-large relative">
-              Attention<br>is <span class="word-rare">RARE.
+            <h2 class="story-line text-large relative" style="line-height:1.1;">
+              Attention<br>is <span class="word-rare relative" id="wordRare" style="display:inline-block;">
+                <span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">A</span><span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">E</span><span class="rare-letter inline-block">.</span>
                 <svg class="svg-underline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
                   <path d="M 5 15 Q 50 20, 95 12" />
                 </svg>
+                <div class="mag-glass" id="magGlass"></div>
               </span>
             </h2>
           </div>
@@ -175,7 +222,16 @@ export function renderHome() {
 
           <!-- SCENE 5: REALIZATION -->
           <div class="story-scene scene-5">
-            <h2 class="story-line">Because growth today<br>isn't effort.</h2>
+            <h2 class="story-line">Because growth today<br>isn't <span class="word-effort relative inline-block">
+              effort.
+              <svg class="glass-cracks absolute" id="glassCracks" viewBox="0 0 200 60" style="top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                <path d="M 10 30 Q 30 10 50 25 T 90 20 T 130 35 T 190 20 M 40 20 Q 60 50 80 40 M 120 30 Q 140 5 160 20 M 80 20 L 90 45" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" opacity="0"/>
+              </svg>
+              <div class="fragment-shard" ></div>
+              <div class="fragment-shard" style="top: 20%; left: 30%;"></div>
+              <div class="fragment-shard" style="top: 60%; left: 70%;"></div>
+              <div class="fragment-shard" style="top: 40%; left: 80%;"></div>
+            </span></h2>
           </div>
 
           <!-- SCENE 6: IT'S SYSTEMS (own screen) & Service Icons -->
@@ -212,7 +268,7 @@ export function renderHome() {
           <!-- SCENE 7: "And we build those systems." + Logo Reveal -->
           <div class="story-scene scene-7">
             <div class="scene-3c-content">
-              <h2 class="story-line" id="weBuildSystems">And we build those systems.</h2>
+              <h2 class="story-line" id="weBuildSystems">And <span id="weBuiltWord" style="display:inline-block;">we</span> build those systems.</h2>
               <div class="hero-reveal-logo-container" id="logoRevealWrap" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="hero-reveal-logo-row" style="display: flex; align-items: center; justify-content: center; gap: clamp(10px, 3vw, 30px); width: 100%;">
                   <div class="reveal-wing reveal-wing--left" id="revealWingLeft"></div>
@@ -357,6 +413,13 @@ function initStoryScroll() {
   const activeLine = document.getElementById('systemActiveLine');
   const systemsLasso = document.querySelector('#systemsLasso path');
 
+  // Extras
+  const magGlass = document.getElementById('magGlass');
+  const rareLetters = gsap.utils.toArray('.rare-letter');
+  const glassCracks = document.getElementById('glassCracks');
+  const fragments = gsap.utils.toArray('.fragment-shard');
+  const weBuiltWord = document.getElementById('weBuiltWord');
+
   // SVGs
   const svgUnderline = document.querySelector('.svg-underline path');
   const svgHighlightPaths = gsap.utils.toArray('.svg-highlight path');
@@ -386,6 +449,9 @@ function initStoryScroll() {
 
   // Initial setup: Hide everything
   gsap.set([s1Line, s2Line, s3Lines, s4Conclusion, s5Line, s6Line, activationWrap, weBuildLine, logoWrap, finalTagline], { autoAlpha: 0, y: 30 });
+  if (magGlass) gsap.set(magGlass, { autoAlpha: 0, x: -50, scale: 0.8 });
+  if (glassCracks) gsap.set(glassCracks, { autoAlpha: 0 });
+  if (fragments.length) gsap.set(fragments, { autoAlpha: 0 });
 
   // Custom setup for silhouettes (from bottom, left, right)
   silhouettes.forEach((sil, i) => {
@@ -397,13 +463,13 @@ function initStoryScroll() {
   });
 
   gsap.set(uiBubbles, { autoAlpha: 0, scale: 0.5 });
-  gsap.set(toolsIcons, { autoAlpha: 0, scale: 0.5, y: 30 });
+  gsap.set(toolsIcons, { autoAlpha: 0, scale: 0.5, y: 20 });
   gsap.set(graphLayer, { autoAlpha: 0 });
   if (trendArrow) gsap.set(trendArrow, { autoAlpha: 0 });
   gsap.set('.scroll-guide', { autoAlpha: 1 });
-  if (wingLeft) gsap.set(wingLeft, { autoAlpha: 0, x: -80 });
-  if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 80 });
-  if (finalLogo) gsap.set(finalLogo, { autoAlpha: 0 });
+  if (wingLeft) gsap.set(wingLeft, { autoAlpha: 0, x: -150 });
+  if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 150 });
+  if (finalLogo) gsap.set(finalLogo, { autoAlpha: 0, y: 50 });
 
   // Flashing phone animation (runs continuously for silhouettes)
   gsap.to('.phone-flash', {
@@ -461,7 +527,23 @@ function initStoryScroll() {
   tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to(fadingSilhouettes, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
     .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
-    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=0.2")
+    // Magnifying glass animates across "RARE"
+    .to(magGlass, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+    .to(magGlass, { x: 250, duration: 2.0, ease: "power1.inOut" }, "-=0.1")
+    .to(rareLetters, {
+      scale: 1.25,
+      color: "var(--green)",
+      stagger: {
+        each: 0.35,
+        yoyo: true,
+        repeat: 1
+      },
+      duration: 0.4,
+      ease: "power2.inOut"
+    }, "<0.1")
+    .to(magGlass, { autoAlpha: 0, duration: 0.3 }, "-=0.4")
+    // Background UI bubbles
+    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=2.0")
     .to({}, { duration: 0.6 })
     .to(uiBubbles, { autoAlpha: 0, scale: 0.5, duration: 0.5, stagger: 0.05, ease: "power3.in" })
     .to(s2Line, { autoAlpha: 0, duration: 0.5 }, "-=0.3");
@@ -469,114 +551,108 @@ function initStoryScroll() {
 
   // ================= SCENE 3 : More content / tools / effort =================
   tl.to(s3Lines, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.3, ease: "power3.out" })
-    .to(toolsIcons, { autoAlpha: 1, scale: 1, y: 0, rotation: () => Math.random() * 20 - 10, duration: 0.5, stagger: 0.08, ease: "back.out(1.2)" }, "-=0.6")
+    .to(toolsIcons, { autoAlpha: 1, scale: 1, y: () => Math.random() * 20 - 10, x: () => Math.random() * 20 - 10, rotation: () => Math.random() * 20 - 10, duration: 0.8, stagger: 0.05, ease: "power1.out" }, "-=0.6")
     .to(remainingSilhouettes, { autoAlpha: 0, duration: 0.8, ease: "power2.inOut" }, "-=0.3")
     .to({}, { duration: 0.8 })
     .to(s3Lines, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
+  // Floating animation for Scene 3 tools
+  gsap.to(toolsIcons, {
+    y: "+=8",
+    x: "+=4",
+    rotation: "+=4",
+    duration: 3,
+    yoyo: true,
+    repeat: -1,
+    ease: "sine.inOut",
+    stagger: { each: 0.2, from: "random" }
+  });
+
   // ================= SCENE 4 : Still no momentum =================
   tl.to(toolsIcons, { autoAlpha: 0, scale: 0.8, duration: 0.6, ease: "power3.inOut" })
-    .to(sceneDarkener, { autoAlpha: 1, duration: 0.6 }, "-=0.6")
     // Graph draws
     .to(graphLayer, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
-    .to([trendLine, trendGlow], { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
+    .to([trendLine], { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" })
     .to(trendArrow, { autoAlpha: 1, duration: 0.3 }, "-=0.3")
     // Text reveals
-    .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=1.0")
-    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "-=0.3")
+    .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=1.5")
+    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "-=1.0")
     .to({}, { duration: 0.8 })
     .to(s4Conclusion, { autoAlpha: 0, duration: 0.5 })
-    .to(graphLayer, { autoAlpha: 0, duration: 0.5 }, "-=0.5")
-    .to(sceneDarkener, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
+    .to(graphLayer, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
   tl.to({}, { duration: 0.3 });
 
   // ================= SCENE 5 : Because growth today isn't effort =================
   tl.to(s5Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to({}, { duration: 0.5 }) // 0.5s delay
+    // Cracks form
+    .to(glassCracks, { autoAlpha: 1, duration: 0.3 })
+    .to(glassCracks.querySelectorAll('path'), { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, "<")
+    // Fragments fall
+    .to(fragments, { autoAlpha: 1, duration: 0.1 }, "-=0.2")
+    .to(fragments, { y: 80, x: () => Math.random() * 40 - 20, rotation: () => Math.random() * 180, autoAlpha: 0, duration: 1.0, ease: "power1.in" }, "-=0.1")
+    .to('.word-effort', { opacity: 0.7, duration: 0.5 }, "-=0.8")
     .to({}, { duration: 0.8 })
     .to(s5Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
   // ================= SCENE 6 : It's systems + Services Lineup =================
   tl.to(s6Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
-    .to(systemsLasso, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.2")
-    .to(activationWrap, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.2");
+    .to(systemsLasso, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.2");
 
-  // Animate the services nodes expanding left to right
+  // State 1 Pause
+  tl.to({}, { duration: 1.0 });
+
+  // State 2 Trigger entire anim automatically on scroll continuation
+  tl.to(activationWrap, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power3.out" });
+
   const isMobile = window.innerWidth < 768;
   const targetWidth = isMobile ? "120px" : "clamp(140px, 18vw, 240px)";
   const targetGap = isMobile ? "0.5rem" : "1.5rem";
 
-  let systemRevealed = false;
-  const node1 = nodes[0];
-  const spark1 = node1.querySelector('.spark-effect');
-  const iconCont1 = node1.querySelector('.activation-node__icon');
-  const icon1 = iconCont1.querySelector('img');
-  const label1 = node1.querySelector('.activation-node__label');
+  gsap.set(nodes, { autoAlpha: 0, y: 20, width: 0, margin: "0px", scale: 0.9 });
 
-  gsap.set(nodes, { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
+  // Line draws
+  if (activeLine && !isMobile) {
+    tl.to(activeLine, { strokeDashoffset: 0, duration: 1.0, ease: "none" }, "scene6_seq");
+  }
 
-  tl.to(node1, {
-    width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out",
-    onUpdate: function () {
-      if (this.progress() > 0.3 && !systemRevealed) {
-        systemRevealed = true;
-        const autoTl = gsap.timeline();
-        nodes.slice(1).forEach((node) => {
-          const spark = node.querySelector('.spark-effect');
-          const iconContainer = node.querySelector('.activation-node__icon');
-          const icon = iconContainer.querySelector('img');
-          const label = node.querySelector('.activation-node__label');
+  // Icons stagger in
+  nodes.forEach((node, i) => {
+    const iconContainer = node.querySelector('.activation-node__icon');
+    const label = node.querySelector('.activation-node__label');
+    const dt = "scene6_seq+=" + (i * 0.2);
 
-          autoTl.to(node, { width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.3")
-            .fromTo(spark, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.2")
-            .to(spark, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
-            .fromTo(icon, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.5)" }, "-=0.4")
-            .to(iconContainer, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
-            .to(label, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
-        });
-        if (activeLine && !isMobile) {
-          autoTl.to(activeLine, { strokeDashoffset: 0, duration: 1.0, ease: "power1.inOut" }, 0);
-        }
-      }
-    },
-    onReverseComplete: function () {
-      systemRevealed = false;
-      gsap.killTweensOf(nodes.slice(1));
-      if (activeLine) gsap.killTweensOf(activeLine);
-      gsap.set(nodes.slice(1), { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
-      if (activeLine) gsap.set(activeLine, { strokeDashoffset: activeLine.getTotalLength() });
-    }
-  })
-    .fromTo(spark1, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.4")
-    .to(spark1, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
-    .fromTo(icon1, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.5")
-    .to(iconCont1, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
-    .to(label1, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
+    tl.to(node, { width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, scale: 1, duration: 0.4, ease: "power2.out" }, dt)
+      .to(iconContainer, { filter: "drop-shadow(0 8px 20px rgba(9, 69, 62, 0.4))", duration: 0.4 }, dt + 0.1)
+      .to(label, { autoAlpha: 1, y: 0, duration: 0.3 }, dt + 0.2);
+  });
 
-  tl.to({}, { duration: 2.0 })
+  tl.to({}, { duration: 1.5 })
     .to(activationWrap, { autoAlpha: 0, duration: 0.5 })
     .to(s6Line, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
   tl.to({}, { duration: 0.3 });
+  // ================= SCENE 7 : And we build those systems (Climax) =================
+  tl.to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to({}, { duration: 0.6 }) // Wait before "we" highlight
+    .to(weBuiltWord, { scale: 1.08, color: "var(--red)", duration: 0.2, ease: "power2.out" })
+    .to({}, { duration: 0.4 }) // Hold
+    .to(weBuiltWord, { scale: 1, color: "var(--green)", duration: 0.4, ease: "power2.inOut" })
+    .to(weBuildLine, { autoAlpha: 0, y: -20, duration: 0.5 }, "+=0.2")
 
-  // ================= SCENE 7 : And we build those systems (Logo Reveal) =================
-  if (wingLeft && wingRight && finalLogo) {
-    tl.to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.1 })
-      .to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
-      .to(finalLogo, { autoAlpha: 1, duration: 0.8 }, "+=0.4")
-      .to(wingLeft, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.4")
-      .to(wingRight, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.8");
+    // Kllezo Logo Rises smoothly
+    .to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.2")
+    .to(finalLogo, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "<")
 
-    if (finalTagline) {
-      tl.to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.4");
-    }
-  } else {
-    tl.to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.1 })
-      .to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
-      .to(logoWrap, { scale: 1, duration: 1.0, ease: "power3.out" }, "+=0.4");
-  }
+    // Wings glide inward
+    .to([wingLeft, wingRight], { autoAlpha: 1, x: 0, duration: 1.0, ease: "power2.out" }, "-=0.4")
+    // Subtle flap (one cycle)
+    .to([wingLeft, wingRight], { scaleY: 0.6, duration: 0.15, yoyo: true, repeat: 1, ease: "power1.inOut" }, "-=0.2")
 
-  // Hold at conclusion
+    // Tagline fades in
+    .to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "+=0.1");
+
   tl.to({}, { duration: 1.0 });
 }
 
