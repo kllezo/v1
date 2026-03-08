@@ -662,6 +662,103 @@ h4 {
     background-position: right center;
 }
 
+/* --- Scene Specific Global Elements --- */
+.scene-darkener {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 15, 12, 0.6);
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+}
+
+.global-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 21;
+    /* Above darkener and basic story scenes, below text if text is z-index 22 */
+}
+
+/* Bring text to front to ensure readability over silhouettes/icons/graphs */
+.story-scene {
+    z-index: 25;
+}
+
+/* Silhouettes */
+.silhouette-wrap {
+    position: absolute;
+    bottom: -10vh;
+    opacity: 0;
+    transform: translateY(15vh);
+    will-change: transform, opacity;
+}
+
+.silhouette-wrap svg {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 -5px 15px rgba(0, 0, 0, 0.15));
+}
+
+/* Bubbles & Popups */
+.ui-bubble {
+    position: absolute;
+    background: var(--bg);
+    color: var(--text);
+    padding: 12px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: scale(0.5);
+    will-change: transform, opacity;
+}
+
+.ui-popup {
+    position: absolute;
+    background: var(--green);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    box-shadow: 0 10px 30px rgba(9, 69, 62, 0.25);
+    opacity: 0;
+    transform: scale(0.5) translateY(20px);
+    will-change: transform, opacity;
+}
+
+/* Tools/Icons */
+.scene3-icon {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: scale(0.5) translateY(30px);
+    will-change: transform, opacity;
+}
+
+/* Graph */
+.graph-layer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    /* Container hides initially */
+    z-index: 18;
+    /* Behind text, above darkener */
+}
+
 /* --- System Network Background --- */
 .system-network-bg {
     position: absolute;

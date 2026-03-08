@@ -37,13 +37,29 @@ const services = [
 ];
 
 export function renderHome() {
+  const silhouettes = Array.from({ length: 12 }).map((_, i) => {
+    const size = 180 + Math.random() * 150;
+    const leftPos = (i / 11) * 100;
+    return `
+      <div class="silhouette-wrap" style="left: calc(${leftPos}% - ${size / 2}px); width: ${size}px; z-index: ${Math.floor(size)};">
+        <svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet">
+          <path d="M50 50a20 20 0 1 0 0-40 20 20 0 0 0 0 40z" fill="#000"/>
+          <path d="M25 180V100a25 25 0 0 1 50 0v80H25z" fill="#000"/>
+          <!-- Arm holding phone -->
+          <path d="M25 100 Q10 120 40 140 L60 110" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/>
+          <rect x="55" y="100" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 60, 110)"/>
+          <circle cx="60" cy="105" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+        </svg>
+      </div>
+    `;
+  }).join('');
+
   return `
-    <!-- SCENE 1: HOOK (Now the direct start) -->
     <section class="story-scroll advanced-story" id="storyScroll">
+      <div id="sceneDarkener" class="scene-darkener"></div>
       <canvas id="systemNetworkBg" class="system-network-bg"></canvas>
       <div class="story-scroll__pinned" id="storyPinned">
         
-        <!-- Scroll Guide (Scene 1 only) -->
         <div class="scroll-guide" id="scrollGuide">
           <span>SCROLL</span>
           <div class="scroll-guide__line-wrap">
@@ -53,14 +69,45 @@ export function renderHome() {
           </div>
         </div>
 
+        <!-- GLOBAL VISUAL LAYERS -->
+        <div class="global-layer sil-layer" id="silLayer">
+           ${silhouettes}
+        </div>
+        
+        <div class="global-layer ui-bubbles-layer" id="uiBubblesLayer">
+           <div class="ui-bubble" style="top: 30%; left: 25%;">💬</div>
+           <div class="ui-bubble" style="top: 45%; right: 28%;">❤️</div>
+           <div class="ui-bubble" style="top: 60%; left: 15%;">🔔</div>
+           <div class="ui-bubble" style="top: 35%; right: 15%;">✓</div>
+           <div class="ui-popup" style="top: 50%; left: 30%;">New like</div>
+           <div class="ui-popup" style="top: 25%; right: 35%;">Trending</div>
+        </div>
+        
+        <div class="global-layer tools-layer" id="toolsLayer">
+           <svg class="scene3-icon" style="top: 20%; left: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M4 6h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2zm8 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3z"/></svg>
+           <svg class="scene3-icon" style="top: 15%; right: 22%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+           <svg class="scene3-icon" style="top: 35%; left: 35%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M13 5.83l1.88 1.88c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-3.59-3.59c-.39-.39-1.02-.39-1.41 0L7.71 6.3c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L11 5.83V20c0 .55.45 1 1 1s1-.45 1-1V5.83z"/></svg>
+           <svg class="scene3-icon" style="top: 40%; right: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.49-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+           <svg class="scene3-icon" style="top: 25%; left: 45%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+           <svg class="scene3-icon" style="top: 50%; right: 40%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+           <svg class="scene3-icon" style="top: 15%; right: 50%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+        </div>
+
+        <div class="global-layer graph-layer" id="graphLayer">
+          <svg viewBox="0 0 1000 300" preserveAspectRatio="none" style="width: 100%; height: 300px; max-width: 1200px; margin: 0 auto;">
+             <path class="trend-line" id="trendLine" d="M -50 150 Q 200 130, 400 180 T 800 220 T 1100 260" stroke="var(--green)" stroke-width="4" fill="none" stroke-linecap="round"/>
+             <path class="trend-glow" d="M -50 150 Q 200 130, 400 180 T 800 220 T 1100 260" stroke="var(--green)" stroke-width="20" opacity="0.15" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
         <div class="story-container">
           <!-- SCENE 1: HOOK -->
           <div class="story-scene scene-1">
             <h2 class="story-line">The internet<br>is crowded.</h2>
           </div>
           
-          <!-- SCENE 2A: ATTENTION IS RARE -->
-          <div class="story-scene scene-2a">
+          <!-- SCENE 2: ATTENTION IS RARE -->
+          <div class="story-scene scene-2">
             <h2 class="story-line text-large relative">
               Attention<br>is <span class="word-rare">RARE.
                 <svg class="svg-underline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
@@ -70,8 +117,8 @@ export function renderHome() {
             </h2>
           </div>
 
-          <!-- SCENE 2B: PAIN (Staggered Auto-Fade) -->
-          <div class="story-scene scene-2b">
+          <!-- SCENE 3: MORE CONTENT. MORE TOOLS. MORE EFFORT. -->
+          <div class="story-scene scene-3">
             <div class="staggered-stack" id="scene2Stack">
               <h2 class="stagger-line">More content.</h2>
               <h2 class="stagger-line">More tools.</h2>
@@ -79,41 +126,58 @@ export function renderHome() {
             </div>
           </div>
 
-          <!-- SCENE 2C: NO MOMENTUM -->
-          <div class="story-scene scene-2c">
+          <!-- SCENE 4: NO MOMENTUM -->
+          <div class="story-scene scene-4">
             <div class="momentum-wrap" id="scene2Conclusion">
               <span class="word-still">Still</span><br>
               <div class="momentum-group">
                 <svg class="svg-highlight" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" preserveAspectRatio="none">
-                    <path class="stroke-path" d="M 0 22 Q 25 10, 50 18 T 100 16" stroke="#d32f2f" stroke-width="18" stroke-linecap="round" fill="none" />
-                    <path class="stroke-path" d="M 2 26 Q 30 18, 60 22 T 96 22" stroke="#d32f2f" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.8"/>
+                    <path class="stroke-path" id="highlightPath1" d="M 0 22 Q 25 10, 50 18 T 100 16" stroke="#d32f2f" stroke-width="18" stroke-linecap="round" fill="none" />
+                    <path class="stroke-path" id="highlightPath2" d="M 2 26 Q 30 18, 60 22 T 96 22" stroke="#d32f2f" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.8"/>
                 </svg>
                 <span class="conclusion-text word-highlight">no momentum.</span>
               </div>
             </div>
           </div>
 
-          <!-- SCENE 3A: REALIZATION -->
-          <div class="story-scene scene-3a">
+          <!-- SCENE 5: REALIZATION -->
+          <div class="story-scene scene-5">
             <h2 class="story-line">Because growth today<br>isn't effort.</h2>
           </div>
 
-          <!-- SCENE 3B: IT'S SYSTEMS (own screen) -->
-          <div class="story-scene scene-3b">
-            <div class="story-line systems-group">
+          <!-- SCENE 6: IT'S SYSTEMS (own screen) & Service Icons -->
+          <div class="story-scene scene-6" style="flex-direction: column;">
+            <div class="story-line systems-group" style="position: absolute; top: 15%;">
               <div class="systems-flex">
                 <span class="word-its">It's</span>
                 <span class="word-systems word-lasso">Systems.
-                  <svg class="svg-lasso" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" preserveAspectRatio="none">
+                  <svg class="svg-lasso" id="systemsLasso" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" preserveAspectRatio="none">
                     <path d="M 5 50 A 65 45 0 1 1 135 50 A 65 45 0 1 1 5 50 Z" />
                   </svg>
                 </span>
               </div>
             </div>
+            
+            <div class="activation-nodes" id="activationNodesWrap" style="margin-top: 15vh; transform: scale(0.9);">
+              ${services.map((s, i) => `
+                <div class="activation-node sequential-node" data-index="${i}">
+                  <div class="spark-effect"></div>
+                  <div class="activation-node__glow-bg"></div>
+                  <div class="activation-node__icon">
+                    <img src="${s.icon}" alt="${s.title}" />
+                  </div>
+                  <p class="activation-node__label" style="font-size: 0.8em; margin-top: 10px;">${s.title}</p>
+                </div>
+              `).join('')}
+              <svg class="system-activation__line floating-line" id="systemLine" xmlns="http://www.w3.org/2000/svg" style="z-index:-1;">
+                <line x1="0%" y1="40%" x2="100%" y2="40%" class="base-line" />
+                <line x1="0%" y1="40%" x2="100%" y2="40%" class="active-line" id="systemActiveLine" />
+              </svg>
+            </div>
           </div>
 
-          <!-- SCENE 3C: "And we build those systems." + Logo Reveal (SAME SCREEN) -->
-          <div class="story-scene scene-3c">
+          <!-- SCENE 7: "And we build those systems." + Logo Reveal -->
+          <div class="story-scene scene-7">
             <div class="scene-3c-content">
               <h2 class="story-line" id="weBuildSystems">And we build those systems.</h2>
               <div class="hero-reveal-logo-container" id="logoRevealWrap" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
@@ -128,30 +192,6 @@ export function renderHome() {
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- Interactive Node Activation (Services) -->
-    <section class="system-activation sequential" id="systemActivation">
-      <div class="activation-nodes" id="activationNodesWrap">
-        ${services.map((s, i) => `
-          <a href="#/services" class="activation-node sequential-node" data-index="${i}">
-            <div class="spark-effect"></div>
-            <div class="activation-node__glow-bg"></div>
-            <div class="activation-node__icon">
-              <img src="${s.icon}" alt="${s.title}" />
-            </div>
-            <p class="activation-node__label">${s.title}</p>
-          </a>
-        `).join('')}
-      </div>
-      
-      <!-- SVG Connection Line connecting all nodes visually floating -->
-      <svg class="system-activation__line floating-line" id="systemLine" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0%" y1="40%" x2="100%" y2="40%" class="base-line" />
-        <line x1="0%" y1="40%" x2="100%" y2="40%" class="active-line" id="systemActiveLine" />
-        <!-- Pulse travel circle -->
-        <circle cx="0" cy="40%" r="4" class="pulse-circle" id="systemPulse" />
-      </svg>
     </section>
 
     <!-- Final Cinematic Conclusion & CTA -->
@@ -235,7 +275,6 @@ export function renderHome() {
 export function initHome() {
   initNetworkBackground();
   initStoryScroll();
-  initSystemActivation();
   initStoryConclusion();
 }
 
@@ -250,21 +289,54 @@ function initStoryScroll() {
 
   if (!container) return;
 
-  // Elements — each scene has a unique class now
+  // Scenes
   const scene1 = document.querySelector('.scene-1');
-  const scene2a = document.querySelector('.scene-2a');
-  const scene2b = document.querySelector('.scene-2b');
-  const scene2c = document.querySelector('.scene-2c');
-  const scene3a = document.querySelector('.scene-3a');
-  const scene3b = document.querySelector('.scene-3b');
-  const scene3c = document.querySelector('.scene-3c');
+  const scene2 = document.querySelector('.scene-2');
+  const scene3 = document.querySelector('.scene-3');
+  const scene4 = document.querySelector('.scene-4');
+  const scene5 = document.querySelector('.scene-5');
+  const scene6 = document.querySelector('.scene-6');
+  const scene7 = document.querySelector('.scene-7');
+
+  // Layers
+  const silLayer = document.getElementById('silLayer');
+  const uiBubblesLayer = document.getElementById('uiBubblesLayer');
+  const toolsLayer = document.getElementById('toolsLayer');
+  const graphLayer = document.getElementById('graphLayer');
+  const sceneDarkener = document.getElementById('sceneDarkener');
+
+  // Specific elements
+  const silhouettes = gsap.utils.toArray('.silhouette-wrap');
+  const uiBubbles = gsap.utils.toArray('.ui-bubble, .ui-popup');
+  const toolsIcons = gsap.utils.toArray('.scene3-icon');
+
+  // Scene Text lines
+  const s1Line = scene1.querySelector('.story-line');
+  const s2Line = scene2.querySelector('.story-line');
+  const s3Lines = gsap.utils.toArray('.stagger-line');
+  const s4Conclusion = document.getElementById('scene2Conclusion');
+  const s5Line = scene5.querySelector('.story-line');
+
+  // Scene 6 elements
+  const s6Line = scene6.querySelector('.systems-group');
+  const activationWrap = document.getElementById('activationNodesWrap');
+  const nodes = gsap.utils.toArray('.sequential-node');
+  const activeLine = document.getElementById('systemActiveLine');
+  const systemsLasso = document.querySelector('#systemsLasso path');
 
   // SVGs
   const svgUnderline = document.querySelector('.svg-underline path');
   const svgHighlightPaths = gsap.utils.toArray('.svg-highlight path');
-  const svgLasso = document.querySelector('.svg-lasso path');
+  const trendLine = document.getElementById('trendLine');
+  const trendGlow = document.querySelector('.trend-glow');
+  const weBuildLine = document.getElementById('weBuildSystems');
+  const logoWrap = document.getElementById('logoRevealWrap');
+  const wingLeft = document.getElementById('revealWingLeft');
+  const wingRight = document.getElementById('revealWingRight');
+  const finalLogo = document.getElementById('finalKllezoLogo');
+  const finalTagline = document.getElementById('finalKllezoTagline');
 
-  // Reset SVG paths for DrawSVG logic
+  // Reset logic
   const setupPath = (path) => {
     if (!path) return 0;
     const len = path.getTotalLength();
@@ -273,200 +345,99 @@ function initStoryScroll() {
   };
   setupPath(svgUnderline);
   svgHighlightPaths.forEach(setupPath);
-  setupPath(svgLasso);
+  setupPath(systemsLasso);
+  if (trendLine) setupPath(trendLine);
+  if (trendGlow) setupPath(trendGlow);
+  if (activeLine) setupPath(activeLine);
 
-  // Initial states — hide all story-lines AND stagger-lines
-  const allStoryLines = gsap.utils.toArray('.story-line');
-  const allStaggerLines = gsap.utils.toArray('.stagger-line');
-  gsap.set(allStoryLines, { autoAlpha: 0, y: 40 });
-  gsap.set(allStaggerLines, { autoAlpha: 0, y: 30 });
+  // Initial setup: Hide everything
+  gsap.set([s1Line, s2Line, s3Lines, s4Conclusion, s5Line, s6Line, activationWrap, weBuildLine, logoWrap, finalTagline], { autoAlpha: 0, y: 30 });
+  gsap.set(silhouettes, { autoAlpha: 0, y: '15vh' });
+  gsap.set(uiBubbles, { autoAlpha: 0, scale: 0.5 });
+  gsap.set(toolsIcons, { autoAlpha: 0, scale: 0.5, y: 30 });
+  gsap.set(graphLayer, { autoAlpha: 0 });
   gsap.set('.scroll-guide', { autoAlpha: 1 });
+  if (wingLeft) gsap.set(wingLeft, { autoAlpha: 0, x: -80 });
+  if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 80 });
+  if (finalLogo) gsap.set(finalLogo, { autoAlpha: 0 });
 
-  // Also hide Scene 2c (momentum wrap) and conclusion initially
-  const momentumWrap = document.getElementById('scene2Conclusion');
-  const conclusionText = document.querySelector('.conclusion-text');
-  gsap.set(momentumWrap, { autoAlpha: 0, y: 40 });
-  gsap.set(conclusionText, { autoAlpha: 0 });
+  // Flashing phone animation (runs continuously for silhouettes)
+  gsap.to('.phone-flash', {
+    opacity: 1,
+    duration: 0.1,
+    repeat: -1,
+    repeatDelay: () => 1 + Math.random() * 4,
+    yoyo: true,
+    ease: 'none'
+  });
 
-  // Scene 3C logo — hidden initially
-  const logoWrap = document.getElementById('logoRevealWrap');
-  if (logoWrap) gsap.set(logoWrap, { autoAlpha: 0, scale: 0.1 });
-
-  // Hero logo initial state & load entrance
-  const heroLogoImg = document.querySelector('.hero-initial-logo__img');
-  if (heroLogoImg) {
-    gsap.fromTo(heroLogoImg,
-      { autoAlpha: 0, scale: 0.95, y: 30 },
-      { autoAlpha: 1, scale: 1.05, y: 0, duration: 2, ease: "power3.out" }
-    );
-  }
-
-  // Master Timeline — tighter scroll for 1 scroll = 1 scene
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: container,
       start: "top top",
-      end: "+=4000",
+      end: "+=6000",
       pin: pinned,
       scrub: 0.5,
       anticipatePin: 1
     }
   });
 
-  // Fade the scroll guide out immediately
-  tl.to('.scroll-guide', { autoAlpha: 0, duration: 0.2 }, "+=0.2");
+  tl.to('.scroll-guide', { autoAlpha: 0, duration: 0.2 }, "+=0.1");
 
-  // ========================================
-  // SCENE 1 : HOOK — "The internet is crowded."
-  // ========================================
-  const s1Lines = scene1.querySelectorAll('.story-line');
-  s1Lines.forEach((line) => {
-    tl.to(line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" })
-      .to({}, { duration: 0.8 })
-      .to(line, { autoAlpha: 0, duration: 0.5 });
-  });
-
-  tl.to({}, { duration: 0.3 });
-
-  // ========================================
-  // SCENE 2A : "Attention is RARE."
-  // ========================================
-  const s2aLine = scene2a.querySelector('.story-line');
-  const rareWord = scene2a.querySelector('.word-rare');
-  tl.to(s2aLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" })
-    .from(rareWord, { scale: 0.5, autoAlpha: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.3")
-    .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, "-=0.2")
+  // ================= SCENE 1 : It's crowded =================
+  tl.to(s1Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to(silhouettes, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "-=0.4")
     .to({}, { duration: 0.8 })
-    .to(s2aLine, { autoAlpha: 0, duration: 0.5 });
-
+    .to(s1Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
-  // ========================================
-  // SCENE 2B : STAGGERED AUTO-FADE
-  // "More content." → "More tools." → "More effort."
-  // These fade in automatically without extra scrolling
-  // ========================================
-  const staggerLines = gsap.utils.toArray('#scene2Stack .stagger-line');
-
-  tl.to(staggerLines, {
-    autoAlpha: 1,
-    y: 0,
-    duration: 0.4,
-    stagger: 0.4,
-    ease: "power2.out"
-  });
-
-  // Hold all three visible
-  tl.to({}, { duration: 0.8 });
-  // Fade them all out together
-  tl.to(staggerLines, { autoAlpha: 0, duration: 0.4 });
-
+  // ================= SCENE 2 : Attention is RARE =================
+  tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
+    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=0.2")
+    .to({}, { duration: 0.6 })
+    .to(uiBubbles, { autoAlpha: 0, scale: 0.5, duration: 0.5, stagger: 0.05, ease: "power3.in" })
+    .to(s2Line, { autoAlpha: 0, duration: 0.5 }, "-=0.3");
   tl.to({}, { duration: 0.3 });
 
-  // ========================================
-  // SCENE 2C : "Still / no momentum."
-  // Red highlight ONLY on "no momentum"
-  // ========================================
-  tl.to(momentumWrap, { autoAlpha: 1, y: 0, duration: 0.3 })
-    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 })
-    .to(conclusionText, { autoAlpha: 1, duration: 0.3 }, "-=0.1")
+  // ================= SCENE 3 : More content / tools / effort =================
+  tl.to(s3Lines, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.3, ease: "power3.out" })
+    .to(toolsIcons, { autoAlpha: 1, scale: 1, y: 0, rotation: () => Math.random() * 20 - 10, duration: 0.5, stagger: 0.08, ease: "back.out(1.2)" }, "-=0.6")
     .to({}, { duration: 0.8 })
-    .to(momentumWrap, { autoAlpha: 0, duration: 0.5 });
-
+    .to(s3Lines, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
-  // ========================================
-  // SCENE 3A : "Because growth today isn't effort."
-  // ========================================
-  const s3aLine = scene3a.querySelector('.story-line');
-  tl.to(s3aLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" })
+  // ================= SCENE 4 : Still no momentum =================
+  tl.to(silhouettes, { autoAlpha: 0, y: '5vh', duration: 0.6, ease: "power3.inOut" })
+    .to(toolsIcons, { autoAlpha: 0, scale: 0.8, duration: 0.6, ease: "power3.inOut" }, "-=0.6")
+    .to(sceneDarkener, { autoAlpha: 1, duration: 0.6 }, "-=0.6")
+    // Graph draws
+    .to(graphLayer, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+    .to([trendLine, trendGlow], { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
+    // Text reveals
+    .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.8")
+    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "-=0.3")
     .to({}, { duration: 0.8 })
-    .to(s3aLine, { autoAlpha: 0, duration: 0.5 });
-
+    .to(s4Conclusion, { autoAlpha: 0, duration: 0.5 })
+    .to(graphLayer, { autoAlpha: 0, duration: 0.5 }, "-=0.5")
+    .to(sceneDarkener, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
   tl.to({}, { duration: 0.3 });
 
-  // ========================================
-  // SCENE 3B : "It's Systems." (own screen)
-  // ========================================
-  const s3bLine = scene3b.querySelector('.story-line');
-  const systemsWord = scene3b.querySelector('.word-systems');
-
-  tl.to(s3bLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" })
-    .from(systemsWord, { scale: 0.5, autoAlpha: 0, duration: 0.5, ease: "back.out(1.5)" }, "-=0.3")
-    .to(svgLasso, { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, "-=0.2")
+  // ================= SCENE 5 : Because growth today isn't effort =================
+  tl.to(s5Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to({}, { duration: 0.8 })
-    .to(s3bLine, { autoAlpha: 0, duration: 0.5 });
-
+    .to(s5Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
-  // ========================================
-  // SCENE 3C : "And we build those systems." + Logo Reveal (SAME SCREEN)
-  // Text appears first, then logo auto-reveals after ~0.6s
-  // ========================================
-  const weBuildLine = document.getElementById('weBuildSystems');
-  const wingLeft = document.getElementById('revealWingLeft');
-  const wingRight = document.getElementById('revealWingRight');
-  const finalLogo = document.getElementById('finalKllezoLogo');
-  const finalTagline = document.getElementById('finalKllezoTagline');
+  // ================= SCENE 6 : It's systems + Services Lineup =================
+  tl.to(s6Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to(systemsLasso, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.2")
+    .to(activationWrap, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.2");
 
-  if (wingLeft && wingRight && finalLogo) {
-    gsap.set(wingLeft, { autoAlpha: 0, x: -80 });
-    gsap.set(wingRight, { autoAlpha: 0, x: 80 });
-    gsap.set(finalLogo, { autoAlpha: 0 });
-    if (finalTagline) gsap.set(finalTagline, { autoAlpha: 0, y: 20 });
-    gsap.set(logoWrap, { autoAlpha: 1, scale: 1 });
-
-    tl.to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" })
-      .to(finalLogo, { autoAlpha: 1, duration: 0.8 }, "+=0.6")
-      .to(wingLeft, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power2.out" }, "-=0.4")
-      .to(wingRight, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power2.out" }, "-=0.8");
-
-    if (finalTagline) {
-      tl.to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.4");
-    }
-
-    tl.to({}, { duration: 1.0 }); // Hold before CTA
-  } else {
-    tl.to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out" })
-      .to(logoWrap, { autoAlpha: 1, scale: 1, duration: 1.0, ease: "power2.out" }, "+=0.6")
-      .to({}, { duration: 1.0 }); // Hold before CTA
-  }
-}
-
-// --- Interactive System Activation (Sequential Shift) ---
-function initSystemActivation() {
-  const section = document.getElementById('systemActivation');
-  const nodes = gsap.utils.toArray('.sequential-node');
-  const activeLine = document.getElementById('systemActiveLine');
-  const pulse = document.getElementById('systemPulse');
-
-  if (!section || !nodes.length) return;
-
-  // Reset line stroke
-  let pathLen = 0;
-  if (activeLine) {
-    pathLen = 10000;
-    gsap.set(activeLine, {
-      strokeDasharray: pathLen,
-      strokeDashoffset: pathLen
-    });
-  }
-
-  // Determine target width & margin based on screen size
+  // Animate the services nodes expanding left to right
   const isMobile = window.innerWidth < 768;
-  const targetWidth = isMobile ? "120px" : "clamp(120px, 14vw, 200px)";
-  const targetGap = isMobile ? "1rem" : "1.5rem";
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: section,
-      start: "center center",
-      end: "+=1000", // Fast pacing for very quick icon reveal
-      pin: true,
-      scrub: 0.2,      // Very snappy and precise scrub
-      anticipatePin: 1
-    }
-  });
+  const targetWidth = isMobile ? "100px" : "clamp(120px, 14vw, 180px)";
+  const targetGap = isMobile ? "0.5rem" : "1rem";
 
   nodes.forEach((node, i) => {
     const spark = node.querySelector('.spark-effect');
@@ -474,55 +445,48 @@ function initSystemActivation() {
     const icon = iconContainer.querySelector('img');
     const label = node.querySelector('.activation-node__label');
 
-    // Initial setup for flex row expansion
-    gsap.set(node, { autoAlpha: 0, y: 80, width: 0, margin: "0px" });
+    gsap.set(node, { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
 
-    // Expansion sequence tightly linked to scrub
-    tl.to(node, {
-      width: targetWidth,
-      marginLeft: targetGap,
-      marginRight: targetGap,
-      autoAlpha: 1,
-      y: 0,
-      duration: 1,
-      ease: "power2.out"
-    })
-      // Spark explosion
-      .fromTo(spark,
-        { scale: 0, autoAlpha: 0 },
-        { scale: 1.8, autoAlpha: 0.8, duration: 0.3, ease: "power2.out" },
-        "-=0.5"
-      ).to(spark, { autoAlpha: 0, scale: 2.5, duration: 0.5, ease: "power2.out" })
-
-      // Icon Pop & Rotation + Glow
-      .fromTo(icon,
-        { scale: 0.6, rotation: -15 },
-        { scale: 1, rotation: 0, duration: 0.8, ease: "elastic.out(1, 0.4)" },
-        "-=0.8"
-      )
-      .to(iconContainer, {
-        filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))",
-        duration: 0.5
-      }, "-=0.6")
-
-      // Label Reveal
-      .to(label, { autoAlpha: 1, y: 0, duration: 0.4 }, "-=0.4");
-
-    // Explicit wait-for-next-scroll gap only between items, not at the end
-    if (i < nodes.length - 1) {
-      tl.to({}, { duration: 0.8 });
-    }
+    tl.to(node, { width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+      .fromTo(spark, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.4")
+      .to(spark, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
+      .fromTo(icon, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.5")
+      .to(iconContainer, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
+      .to(label, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
   });
 
-  // Draw the connection line across all nodes simultaneously while scrubbing
+  // Draw connecting line
   if (activeLine && !isMobile) {
-    tl.to(activeLine, {
-      strokeDashoffset: 0,
-      duration: nodes.length * 1.5,
-      ease: "none"
-    }, 0);
+    tl.to(activeLine, { strokeDashoffset: 0, duration: nodes.length * 0.4, ease: "power1.inOut" }, "-=" + (nodes.length * 0.6));
   }
+
+  tl.to({}, { duration: 1.0 })
+    .to(activationWrap, { autoAlpha: 0, duration: 0.5 })
+    .to(s6Line, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
+  tl.to({}, { duration: 0.3 });
+
+  // ================= SCENE 7 : And we build those systems (Logo Reveal) =================
+  if (wingLeft && wingRight && finalLogo) {
+    tl.to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.1 })
+      .to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
+      .to(finalLogo, { autoAlpha: 1, duration: 0.8 }, "+=0.4")
+      .to(wingLeft, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.4")
+      .to(wingRight, { autoAlpha: 1, x: 0, duration: 0.8, ease: "power3.out" }, "-=0.8");
+
+    if (finalTagline) {
+      tl.to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.4");
+    }
+  } else {
+    tl.to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.1 })
+      .to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" })
+      .to(logoWrap, { scale: 1, duration: 1.0, ease: "power3.out" }, "+=0.4");
+  }
+
+  // Hold at conclusion
+  tl.to({}, { duration: 1.0 });
 }
+
+// initSystemActivation logic moved to initStoryScroll Scene 6
 
 // --- Final Cinematic Conclusion & CTA ---
 function initStoryConclusion() {
