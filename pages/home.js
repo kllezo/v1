@@ -55,67 +55,80 @@ export function renderHome() {
     const size = sizeBase + Math.random() * sizeVar;
 
     // Distribute left, right, bottom more deliberately to keep center safe area
-    let leftPos, bottomPos, isLeft;
+    let leftPos, bottomPos, isLeft, baseRotation = 0;
     if (i < 5) {
-      // Left side
-      leftPos = Math.random() * 20 - 5; // -5% to 15%
-      bottomPos = Math.random() * 40 - 15;
+      // Left side leaning right
+      leftPos = Math.random() * 15 - 5; // -5% to 10%
+      bottomPos = Math.random() * 30 - 15;
       isLeft = true;
+      baseRotation = 5 + Math.random() * 10;
     } else if (i < 10) {
-      // Right side
-      leftPos = 85 + Math.random() * 20; // 85% to 105%
-      bottomPos = Math.random() * 40 - 15;
+      // Right side leaning left
+      leftPos = 85 + Math.random() * 15; // 85% to 100%
+      bottomPos = Math.random() * 30 - 15;
       isLeft = false;
+      baseRotation = -5 - Math.random() * 10;
     } else {
-      // Bottom center-ish
+      // Bottom center-ish leaning slightly
       leftPos = 20 + Math.random() * 60; // 20% to 80%
-      bottomPos = -20 - Math.random() * 10; // strictly bottom
+      bottomPos = -20 - Math.random() * 5; // strictly bottom
       isLeft = leftPos < 50;
+      baseRotation = (Math.random() - 0.5) * 10;
     }
 
     const hasPhone = Math.random() > 0.3;
     // ~70% tracking, 30% static eyes
     const trackingClass = Math.random() > 0.3 ? 'tracking-eyes' : 'static-eyes';
 
-    // SVG paths based on direction
-    const headPath = `M50 45 a 20 20 0 1 0 0 -40 a 20 20 0 0 0 0 40 z`;
-    const bodyPath = `M15 150 V 90 Q 15 65 50 65 Q 85 65 85 90 V 150 Z`;
+    // Asynchronous animation variables
+    const idleDelay = -(Math.random() * 4).toFixed(2); // Negative delay starts animation immediately at random point
+    const pulseWait = (4 + Math.random() * 4).toFixed(2); // 4-8s interval
+    const blinkWait = (3 + Math.random() * 5).toFixed(2); // 3-8s interval
 
-    // Left-facing phone (for right side silhouettes)
+    // Strict SVG paths for specific reference styling Look
+    // Circle Head
+    const headMarkup = `<circle cx="50" cy="35" r="22" fill="#000000"/>`;
+    // Rounded shoulders body
+    const bodyMarkup = `<path d="M 20 150 L 20 100 Q 20 65 50 65 Q 80 65 80 100 L 80 150 Z" fill="#000000"/>`;
+
+    // Left-facing phone (for right side silhouettes holding in left arm)
+    // Arm arches up
     const phoneLeft = `
-      <path d="M75 90 Q85 110 55 125 L35 100" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
-      <rect x="30" y="90" width="10" height="20" rx="2" fill="#222" transform="rotate(-20, 35, 100)"/>
-      <circle cx="35" cy="95" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+      <path d="M 80 110 Q 95 90 70 70" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+      <rect x="55" y="55" width="12" height="24" rx="2" fill="#111" transform="rotate(-15, 60, 65)"/>
+      <circle cx="62" cy="65" r="2" fill="#fff" class="phone-pulse" style="--pulse-wait: ${pulseWait}s" opacity="0"/>
     `;
 
-    // Right-facing phone (for left side silhouettes)
+    // Right-facing phone (for left side silhouettes holding in right arm)
     const phoneRight = `
-      <path d="M25 90 Q15 110 45 125 L65 100" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
-      <rect x="60" y="90" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 65, 100)"/>
-      <circle cx="65" cy="95" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+      <path d="M 20 110 Q 5 90 30 70" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+      <rect x="33" y="55" width="12" height="24" rx="2" fill="#111" transform="rotate(15, 40, 65)"/>
+      <circle cx="38" cy="65" r="2" fill="#fff" class="phone-pulse" style="--pulse-wait: ${pulseWait}s" opacity="0"/>
     `;
 
     const phonePath = isLeft ? phoneRight : phoneLeft;
 
-    // Eye positions - shift slightly based on facing
-    const eyeOffsetX = isLeft ? 4 : -4;
+    // Eye positions matching new circle head setup
+    const eyeOffsetX = isLeft ? 3 : -3;
 
     return `
-      <div class="silhouette-wrap ${depthClass}" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); bottom: ${bottomPos}%; width: ${size}px; z-index: ${Math.floor(size)};">
-        <svg viewBox="0 0 100 150" preserveAspectRatio="xMidYMax meet">
-          <!-- Torso & Head -->
-          <path d="${headPath}" fill="#000000"/>
-          <path d="${bodyPath}" fill="#000000"/>
-          
-          <!-- Eyes -->
-          <g class="sil-eyes ${trackingClass}" opacity="0">
-            <circle cx="${43 + eyeOffsetX}" cy="25" r="2.5" fill="#ffffff"/>
-            <circle cx="${57 + eyeOffsetX}" cy="25" r="2.5" fill="#ffffff"/>
-          </g>
+      <div class="silhouette-wrap ${depthClass} idle-float" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); bottom: ${bottomPos}%; width: ${size}px; z-index: ${Math.floor(size)}; --idle-del: ${idleDelay}s;">
+        <div class="sil-inner" style="transform: rotate(${baseRotation}deg); width: 100%; height: 100%;">
+          <svg viewBox="0 0 100 150" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="overflow: visible;">
+            <!-- Torso & Head -->
+            ${headMarkup}
+            ${bodyMarkup}
+            
+            <!-- Eyes -->
+            <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="50 35">
+              <circle cx="${45 + eyeOffsetX}" cy="32" r="2.5" fill="#ffffff"/>
+              <circle cx="${55 + eyeOffsetX}" cy="32" r="2.5" fill="#ffffff"/>
+            </g>
 
-          <!-- Arm holding phone -->
-          ${hasPhone ? `<g class="sil-phone">${phonePath}</g>` : ''}
-        </svg>
+            <!-- Arm holding phone -->
+            ${hasPhone ? `<g class="sil-phone">${phonePath}</g>` : ''}
+          </svg>
+        </div>
       </div>
     `;
   }).join('');
@@ -454,12 +467,15 @@ function initStoryScroll() {
   if (fragments.length) gsap.set(fragments, { autoAlpha: 0 });
 
   // Custom setup for silhouettes (from bottom, left, right)
+  // Target the inner div to avoid overriding the CSS idleFloat animation
+  const silInners = document.querySelectorAll('.sil-inner');
   silhouettes.forEach((sil, i) => {
     let startX = 0, startY = 0;
-    if (i % 3 === 0) startX = -window.innerWidth * 0.6; // slide from left
-    else if (i % 3 === 1) startX = window.innerWidth * 0.6;  // slide from right
+    if (i < 5) startX = -window.innerWidth * 0.6; // slide from left
+    else if (i < 10) startX = window.innerWidth * 0.6;  // slide from right
     else startY = '20vh'; // slide from bottom
-    gsap.set(sil, { autoAlpha: 0, x: startX, y: startY });
+    gsap.set(sil, { autoAlpha: 0 });
+    gsap.set(silInners[i], { x: startX, y: startY });
   });
 
   gsap.set(uiBubbles, { autoAlpha: 0, scale: 0.5 });
@@ -471,15 +487,8 @@ function initStoryScroll() {
   if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 150 });
   if (finalLogo) gsap.set(finalLogo, { autoAlpha: 0, y: 50 });
 
-  // Flashing phone animation (runs continuously for silhouettes)
-  gsap.to('.phone-flash', {
-    opacity: 1,
-    duration: 0.1,
-    repeat: -1,
-    repeatDelay: () => 1 + Math.random() * 4,
-    yoyo: true,
-    ease: 'none'
-  });
+  // The asynchronous phone pulse and blinking are driven purely by CSS keyframes.
+  // Removing the old constant flash logic.
 
   // Eyes tracking cursor logic
   const trackingEyes = document.querySelectorAll('.tracking-eyes');
@@ -512,10 +521,10 @@ function initStoryScroll() {
 
   // ================= SCENE 1 : It's crowded =================
   tl.to(s1Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
-    .to(silhouettes, { autoAlpha: 1, x: 0, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "-=0.4")
-    // Eyes appear and blink
+    .to(silhouettes, { autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power1.inOut" }, "-=0.4")
+    .to(silInners, { x: 0, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "<")
+    // Eyes appear
     .to('.sil-eyes', { autoAlpha: 1, duration: 0.3 }, "-=0.2")
-    .to('.sil-eyes', { autoAlpha: 0, duration: 0.1, yoyo: true, repeat: 1 }, "+=0.1")
     .to({}, { duration: 0.8 })
     .to(s1Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
@@ -527,21 +536,22 @@ function initStoryScroll() {
   tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to(fadingSilhouettes, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
     .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
-    // Magnifying glass animates across "RARE"
+    // Magnifying glass syncs exactly with letters
     .to(magGlass, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
-    .to(magGlass, { x: 250, duration: 2.0, ease: "power1.inOut" }, "-=0.1")
+    .to(magGlass, { x: 250, duration: 1.4, ease: "none" }, "-=0.1")
     .to(rareLetters, {
       scale: 1.25,
       color: "var(--green)",
       stagger: {
-        each: 0.35,
+        each: 0.35, // 1.4s duration / 4 letters = 0.35s delay each
         yoyo: true,
         repeat: 1
       },
-      duration: 0.4,
-      ease: "power2.inOut"
-    }, "<0.1")
-    .to(magGlass, { autoAlpha: 0, duration: 0.3 }, "-=0.4")
+      duration: 0.35,
+      ease: "power1.inOut"
+    }, "<") // Start perfectly identically with the magGlass slide
+
+    .to(magGlass, { autoAlpha: 0, duration: 0.3 })
     // Background UI bubbles
     .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=2.0")
     .to({}, { duration: 0.6 })
