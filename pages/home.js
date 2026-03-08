@@ -94,9 +94,10 @@ export function renderHome() {
         </div>
 
         <div class="global-layer graph-layer" id="graphLayer">
-          <svg viewBox="0 0 1000 300" preserveAspectRatio="none" style="width: 100%; height: 300px; max-width: 1200px; margin: 0 auto;">
-             <path class="trend-line" id="trendLine" d="M -50 150 Q 200 130, 400 180 T 800 220 T 1100 260" stroke="var(--green)" stroke-width="4" fill="none" stroke-linecap="round"/>
-             <path class="trend-glow" d="M -50 150 Q 200 130, 400 180 T 800 220 T 1100 260" stroke="var(--green)" stroke-width="20" opacity="0.15" fill="none" stroke-linecap="round"/>
+          <svg viewBox="0 0 1000 300" preserveAspectRatio="none" style="width: 100%; height: 300px; max-width: 1200px; margin: 0 auto; overflow: visible;">
+             <path class="trend-line" id="trendLine" d="M -50 50 L 150 100 L 300 60 L 500 160 L 700 120 L 950 250" stroke="#d32f2f" stroke-width="8" stroke-linejoin="round" fill="none" stroke-linecap="round"/>
+             <path class="trend-glow" d="M -50 50 L 150 100 L 300 60 L 500 160 L 700 120 L 950 250" stroke="#d32f2f" stroke-width="24" opacity="0.15" stroke-linejoin="round" fill="none" stroke-linecap="round"/>
+             <path id="trendArrow" d="M 910 230 L 950 250 L 920 270" stroke="#d32f2f" stroke-width="8" stroke-linejoin="round" stroke-linecap="round" fill="none" opacity="0"/>
           </svg>
         </div>
 
@@ -329,6 +330,7 @@ function initStoryScroll() {
   const svgHighlightPaths = gsap.utils.toArray('.svg-highlight path');
   const trendLine = document.getElementById('trendLine');
   const trendGlow = document.querySelector('.trend-glow');
+  const trendArrow = document.getElementById('trendArrow');
   const weBuildLine = document.getElementById('weBuildSystems');
   const logoWrap = document.getElementById('logoRevealWrap');
   const wingLeft = document.getElementById('revealWingLeft');
@@ -352,10 +354,20 @@ function initStoryScroll() {
 
   // Initial setup: Hide everything
   gsap.set([s1Line, s2Line, s3Lines, s4Conclusion, s5Line, s6Line, activationWrap, weBuildLine, logoWrap, finalTagline], { autoAlpha: 0, y: 30 });
-  gsap.set(silhouettes, { autoAlpha: 0, y: '15vh' });
+
+  // Custom setup for silhouettes (from bottom, left, right)
+  silhouettes.forEach((sil, i) => {
+    let startX = 0, startY = 0;
+    if (i % 3 === 0) startX = -window.innerWidth * 0.6; // slide from left
+    else if (i % 3 === 1) startX = window.innerWidth * 0.6;  // slide from right
+    else startY = '20vh'; // slide from bottom
+    gsap.set(sil, { autoAlpha: 0, x: startX, y: startY });
+  });
+
   gsap.set(uiBubbles, { autoAlpha: 0, scale: 0.5 });
   gsap.set(toolsIcons, { autoAlpha: 0, scale: 0.5, y: 30 });
   gsap.set(graphLayer, { autoAlpha: 0 });
+  if (trendArrow) gsap.set(trendArrow, { autoAlpha: 0 });
   gsap.set('.scroll-guide', { autoAlpha: 1 });
   if (wingLeft) gsap.set(wingLeft, { autoAlpha: 0, x: -80 });
   if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 80 });
@@ -386,7 +398,7 @@ function initStoryScroll() {
 
   // ================= SCENE 1 : It's crowded =================
   tl.to(s1Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
-    .to(silhouettes, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "-=0.4")
+    .to(silhouettes, { autoAlpha: 1, x: 0, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "-=0.4")
     .to({}, { duration: 0.8 })
     .to(s1Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
@@ -403,19 +415,20 @@ function initStoryScroll() {
   // ================= SCENE 3 : More content / tools / effort =================
   tl.to(s3Lines, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.3, ease: "power3.out" })
     .to(toolsIcons, { autoAlpha: 1, scale: 1, y: 0, rotation: () => Math.random() * 20 - 10, duration: 0.5, stagger: 0.08, ease: "back.out(1.2)" }, "-=0.6")
+    .to(silhouettes, { autoAlpha: 0, duration: 0.8, ease: "power2.inOut" }, "-=0.3")
     .to({}, { duration: 0.8 })
     .to(s3Lines, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
   // ================= SCENE 4 : Still no momentum =================
-  tl.to(silhouettes, { autoAlpha: 0, y: '5vh', duration: 0.6, ease: "power3.inOut" })
-    .to(toolsIcons, { autoAlpha: 0, scale: 0.8, duration: 0.6, ease: "power3.inOut" }, "-=0.6")
+  tl.to(toolsIcons, { autoAlpha: 0, scale: 0.8, duration: 0.6, ease: "power3.inOut" })
     .to(sceneDarkener, { autoAlpha: 1, duration: 0.6 }, "-=0.6")
     // Graph draws
     .to(graphLayer, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
     .to([trendLine, trendGlow], { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" })
+    .to(trendArrow, { autoAlpha: 1, duration: 0.3 }, "-=0.3")
     // Text reveals
-    .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.8")
+    .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=1.0")
     .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "-=0.3")
     .to({}, { duration: 0.8 })
     .to(s4Conclusion, { autoAlpha: 0, duration: 0.5 })
@@ -436,31 +449,57 @@ function initStoryScroll() {
 
   // Animate the services nodes expanding left to right
   const isMobile = window.innerWidth < 768;
-  const targetWidth = isMobile ? "100px" : "clamp(120px, 14vw, 180px)";
-  const targetGap = isMobile ? "0.5rem" : "1rem";
+  const targetWidth = isMobile ? "120px" : "clamp(140px, 18vw, 240px)";
+  const targetGap = isMobile ? "0.5rem" : "1.5rem";
 
-  nodes.forEach((node, i) => {
-    const spark = node.querySelector('.spark-effect');
-    const iconContainer = node.querySelector('.activation-node__icon');
-    const icon = iconContainer.querySelector('img');
-    const label = node.querySelector('.activation-node__label');
+  let systemRevealed = false;
+  const node1 = nodes[0];
+  const spark1 = node1.querySelector('.spark-effect');
+  const iconCont1 = node1.querySelector('.activation-node__icon');
+  const icon1 = iconCont1.querySelector('img');
+  const label1 = node1.querySelector('.activation-node__label');
 
-    gsap.set(node, { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
+  gsap.set(nodes, { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
 
-    tl.to(node, { width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
-      .fromTo(spark, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.4")
-      .to(spark, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
-      .fromTo(icon, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.5")
-      .to(iconContainer, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
-      .to(label, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
-  });
+  tl.to(node1, {
+    width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out",
+    onUpdate: function () {
+      if (this.progress() > 0.3 && !systemRevealed) {
+        systemRevealed = true;
+        const autoTl = gsap.timeline();
+        nodes.slice(1).forEach((node) => {
+          const spark = node.querySelector('.spark-effect');
+          const iconContainer = node.querySelector('.activation-node__icon');
+          const icon = iconContainer.querySelector('img');
+          const label = node.querySelector('.activation-node__label');
 
-  // Draw connecting line
-  if (activeLine && !isMobile) {
-    tl.to(activeLine, { strokeDashoffset: 0, duration: nodes.length * 0.4, ease: "power1.inOut" }, "-=" + (nodes.length * 0.6));
-  }
+          autoTl.to(node, { width: targetWidth, marginLeft: targetGap, marginRight: targetGap, autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=0.3")
+            .fromTo(spark, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.2")
+            .to(spark, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
+            .fromTo(icon, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.5)" }, "-=0.4")
+            .to(iconContainer, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
+            .to(label, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
+        });
+        if (activeLine && !isMobile) {
+          autoTl.to(activeLine, { strokeDashoffset: 0, duration: 1.0, ease: "power1.inOut" }, 0);
+        }
+      }
+    },
+    onReverseComplete: function () {
+      systemRevealed = false;
+      gsap.killTweensOf(nodes.slice(1));
+      if (activeLine) gsap.killTweensOf(activeLine);
+      gsap.set(nodes.slice(1), { autoAlpha: 0, y: 40, width: 0, margin: "0px" });
+      if (activeLine) gsap.set(activeLine, { strokeDashoffset: activeLine.getTotalLength() });
+    }
+  })
+    .fromTo(spark1, { scale: 0, autoAlpha: 0 }, { scale: 1.5, autoAlpha: 0.8, duration: 0.2, ease: "power2.out" }, "-=0.4")
+    .to(spark1, { autoAlpha: 0, scale: 2, duration: 0.3, ease: "power2.out" })
+    .fromTo(icon1, { scale: 0.6, rotation: -15 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.5)" }, "-=0.5")
+    .to(iconCont1, { filter: "drop-shadow(0 0 15px rgba(9, 69, 62, 0.6))", duration: 0.4 }, "-=0.4")
+    .to(label1, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.3");
 
-  tl.to({}, { duration: 1.0 })
+  tl.to({}, { duration: 2.0 })
     .to(activationWrap, { autoAlpha: 0, duration: 0.5 })
     .to(s6Line, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
   tl.to({}, { duration: 0.3 });

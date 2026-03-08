@@ -682,8 +682,18 @@ h4 {
     right: 0;
     bottom: 0;
     pointer-events: none;
-    z-index: 21;
-    /* Above darkener and basic story scenes, below text if text is z-index 22 */
+}
+
+.sil-layer {
+    z-index: 20;
+}
+
+.ui-bubbles-layer {
+    z-index: 22;
+}
+
+.tools-layer {
+    z-index: 23;
 }
 
 /* Bring text to front to ensure readability over silhouettes/icons/graphs */
