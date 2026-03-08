@@ -38,17 +38,49 @@ const services = [
 
 export function renderHome() {
   const silhouettes = Array.from({ length: 12 }).map((_, i) => {
-    const size = 180 + Math.random() * 150;
-    const leftPos = (i / 11) * 100;
+    // 3 depth layers
+    let depthClass = '';
+    let sizeBase = 0;
+    let sizeVar = 0;
+    if (i % 3 === 0) {
+      depthClass = 'depth-back';
+      sizeBase = 100; sizeVar = 50;
+    } else if (i % 3 === 1) {
+      depthClass = 'depth-mid';
+      sizeBase = 160; sizeVar = 60;
+    } else {
+      depthClass = 'depth-front';
+      sizeBase = 240; sizeVar = 80;
+    }
+
+    const size = sizeBase + Math.random() * sizeVar;
+    // Distribute more evenly, ensuring edge elements for Scene 2
+    const leftPos = (i / 11) * 90 + 5;
+    const hasPhone = Math.random() > 0.4;
+    // ~70% tracking, 30% static eyes
+    const trackingClass = Math.random() > 0.3 ? 'tracking-eyes' : 'static-eyes';
+
     return `
-      <div class="silhouette-wrap" style="left: calc(${leftPos}% - ${size / 2}px); width: ${size}px; z-index: ${Math.floor(size)};">
+      <div class="silhouette-wrap ${depthClass}" id="sil-${i}" style="left: calc(${leftPos}% - ${size / 2}px); width: ${size}px; z-index: ${Math.floor(size)};">
         <svg viewBox="0 0 100 200" preserveAspectRatio="xMidYMax meet">
-          <path d="M50 50a20 20 0 1 0 0-40 20 20 0 0 0 0 40z" fill="#000"/>
-          <path d="M25 180V100a25 25 0 0 1 50 0v80H25z" fill="#000"/>
+          <!-- Torso & Head -->
+          <path d="M50 50a20 20 0 1 0 0-40 20 20 0 0 0 0 40z" fill="#000000"/>
+          <path d="M25 180V100a25 25 0 0 1 50 0v80H25z" fill="#000000"/>
+          
+          <!-- Eyes -->
+          <g class="sil-eyes ${trackingClass}" opacity="0">
+            <circle cx="43" cy="35" r="2.5" fill="#ffffff"/>
+            <circle cx="57" cy="35" r="2.5" fill="#ffffff"/>
+          </g>
+
           <!-- Arm holding phone -->
-          <path d="M25 100 Q10 120 40 140 L60 110" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/>
-          <rect x="55" y="100" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 60, 110)"/>
-          <circle cx="60" cy="105" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+          ${hasPhone ? `
+          <g class="sil-phone">
+            <path d="M25 100 Q10 120 40 140 L60 110" fill="none" stroke="#000000" stroke-width="12" stroke-linecap="round"/>
+            <rect x="55" y="100" width="10" height="20" rx="2" fill="#222" transform="rotate(20, 60, 110)"/>
+            <circle cx="60" cy="105" r="2" fill="#fff" class="phone-flash" opacity="0"/>
+          </g>
+          ` : ''}
         </svg>
       </div>
     `;
@@ -383,6 +415,22 @@ function initStoryScroll() {
     ease: 'none'
   });
 
+  // Eyes tracking cursor logic
+  const trackingEyes = document.querySelectorAll('.tracking-eyes');
+  window.addEventListener('mousemove', (e) => {
+    // calculate mouse position relative to center (-0.5 to 0.5)
+    const mouseX = (e.clientX / window.innerWidth) - 0.5;
+    const mouseY = (e.clientY / window.innerHeight) - 0.5;
+
+    // move eyes by max 10px depending on mouse
+    gsap.to(trackingEyes, {
+      x: mouseX * 20,
+      y: mouseY * 20,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+  });
+
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: container,
@@ -399,12 +447,19 @@ function initStoryScroll() {
   // ================= SCENE 1 : It's crowded =================
   tl.to(s1Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to(silhouettes, { autoAlpha: 1, x: 0, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "-=0.4")
+    // Eyes appear and blink
+    .to('.sil-eyes', { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+    .to('.sil-eyes', { autoAlpha: 0, duration: 0.1, yoyo: true, repeat: 1 }, "+=0.1")
     .to({}, { duration: 0.8 })
     .to(s1Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
 
   // ================= SCENE 2 : Attention is RARE =================
+  const fadingSilhouettes = silhouettes.slice(1, 11); // keep 0 and 11
+  const remainingSilhouettes = [silhouettes[0], silhouettes[11]];
+
   tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+    .to(fadingSilhouettes, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
     .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
     .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=0.2")
     .to({}, { duration: 0.6 })
@@ -415,7 +470,7 @@ function initStoryScroll() {
   // ================= SCENE 3 : More content / tools / effort =================
   tl.to(s3Lines, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.3, ease: "power3.out" })
     .to(toolsIcons, { autoAlpha: 1, scale: 1, y: 0, rotation: () => Math.random() * 20 - 10, duration: 0.5, stagger: 0.08, ease: "back.out(1.2)" }, "-=0.6")
-    .to(silhouettes, { autoAlpha: 0, duration: 0.8, ease: "power2.inOut" }, "-=0.3")
+    .to(remainingSilhouettes, { autoAlpha: 0, duration: 0.8, ease: "power2.inOut" }, "-=0.3")
     .to({}, { duration: 0.8 })
     .to(s3Lines, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
