@@ -22,18 +22,6 @@ const services = [
     desc: `Conversations that never sleep.\nInstant replies. Intelligent follow-ups.\nHuman-like interactions powered by automation.`,
     impact: 'Your business responding — even while you sleep.',
   },
-  {
-    icon: '/icon-growth.svg.png',
-    title: 'Growth Strategy & Consultancy',
-    desc: `Clarity over chaos. Direction over noise.\nSharp positioning. Calculated moves.\nGrowth that feels intentional — not accidental.`,
-    impact: 'Strategy that makes every move count.',
-  },
-  {
-    icon: '/icon-workflow.svg.png',
-    title: 'Workflow Automation',
-    desc: `Manual is outdated.\nSystems that connect, trigger, and execute.\nSilent engines running your backend at full throttle.`,
-    impact: 'Your operations — finally on autopilot.',
-  },
 ];
 
 export function renderHome() {
@@ -176,12 +164,12 @@ export function renderHome() {
         </div>
         
         <div class="global-layer ui-bubbles-layer" id="uiBubblesLayer">
-           <div class="ui-bubble" style="top: 30%; left: 25%;">💬</div>
-           <div class="ui-bubble" style="top: 45%; right: 28%;">❤️</div>
-           <div class="ui-bubble" style="top: 60%; left: 15%;">🔔</div>
-           <div class="ui-bubble" style="top: 35%; right: 15%;">✓</div>
-           <div class="ui-popup" style="top: 50%; left: 30%;">New like</div>
-           <div class="ui-popup" style="top: 25%; right: 35%;">Trending</div>
+           <div class="ui-bubble" style="top: 10%; left: 10%;">💬</div>
+           <div class="ui-bubble" style="top: 10%; right: 10%;">❤️</div>
+           <div class="ui-bubble" style="bottom: 10%; left: 12%;">🔔</div>
+           <div class="ui-bubble" style="bottom: 10%; right: 12%;">✓</div>
+           <div class="ui-popup" style="top: 50%; left: 5%;">New like</div>
+           <div class="ui-popup" style="top: 50%; right: 5%;">Trending</div>
         </div>
         
         <div class="global-layer tools-layer" id="toolsLayer">
@@ -212,17 +200,19 @@ export function renderHome() {
              <path id="trendArrow" d="M 890 280 L 950 320 L 910 340" stroke="#d32f2f" stroke-width="12" stroke-linejoin="round" stroke-linecap="round" fill="none" opacity="0"/>
           </svg>
         </div>
+        
+        <div class="global-layer pattern-particles-layer" id="patternParticlesLayer" style="z-index: 50; pointer-events: none;"></div>
 
         <div class="story-container">
           <!-- SCENE 1: HOOK -->
           <div class="story-scene scene-1">
-            <h2 class="story-line">The internet<br>is crowded.</h2>
+            <h2 class="story-line" style="transform: translateY(-120px);">The internet<br>is crowded.</h2>
           </div>
           
           <!-- SCENE 2: ATTENTION IS RARE -->
           <div class="story-scene scene-2">
-            <h2 class="story-line text-large relative" style="line-height:1.1;">
-              Attention<br>is <span class="word-rare relative" id="wordRare" style="display:inline-block;">
+            <h2 class="story-line text-large relative" style="line-height:1.1; margin-top: 80px;">
+              Attention<br>is <span class="word-rare relative" id="wordRare" style="display:inline-block; cursor: none;">
                 <span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">A</span><span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">E</span><span class="rare-letter inline-block">.</span>
                 <svg class="svg-underline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
                   <path d="M 5 15 Q 50 20, 95 12" />
@@ -248,7 +238,6 @@ export function renderHome() {
               <div class="momentum-group">
                 <svg class="svg-highlight" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" preserveAspectRatio="none">
                     <path class="stroke-path" id="highlightPath1" d="M 0 22 Q 25 10, 50 18 T 100 16" stroke="#d32f2f" stroke-width="18" stroke-linecap="round" fill="none" />
-                    <path class="stroke-path" id="highlightPath2" d="M 2 26 Q 30 18, 60 22 T 96 22" stroke="#d32f2f" stroke-width="12" stroke-linecap="round" fill="none" opacity="0.8"/>
                 </svg>
                 <span class="conclusion-text word-highlight">no momentum.</span>
               </div>
@@ -262,17 +251,13 @@ export function renderHome() {
               <svg class="glass-cracks absolute" id="glassCracks" viewBox="0 0 200 60" style="top:0; left:0; width:100%; height:100%; pointer-events:none;">
                 <path d="M 10 30 Q 30 10 50 25 T 90 20 T 130 35 T 190 20 M 40 20 Q 60 50 80 40 M 120 30 Q 140 5 160 20 M 80 20 L 90 45" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" opacity="0"/>
               </svg>
-              <div class="fragment-shard" ></div>
-              <div class="fragment-shard" style="top: 20%; left: 30%;"></div>
-              <div class="fragment-shard" style="top: 60%; left: 70%;"></div>
-              <div class="fragment-shard" style="top: 40%; left: 80%;"></div>
             </span></h2>
           </div>
 
           <!-- SCENE 6: IT'S SYSTEMS (own screen) & Service Icons -->
-          <div class="story-scene scene-6" style="flex-direction: column;">
-            <div class="story-line systems-group" style="position: absolute; top: 15%;">
-              <div class="systems-flex">
+          <div class="story-scene scene-6" style="display: flex; flex-direction: column; height: 100vh; width: 100%;">
+            <div class="story-line systems-group" style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;">
+              <div class="systems-flex" style="position: relative;">
                 <span class="word-its">It's</span>
                 <span class="word-systems word-lasso">Systems.
                   <svg class="svg-lasso" id="systemsLasso" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" preserveAspectRatio="none">
@@ -282,7 +267,7 @@ export function renderHome() {
               </div>
             </div>
             
-            <div class="activation-nodes" id="activationNodesWrap" style="margin-top: 15vh; transform: scale(0.9);">
+            <div class="activation-nodes" id="activationNodesWrap" style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; transform: scale(1.4);">
               ${services.map((s, i) => `
                 <div class="activation-node sequential-node" data-index="${i}">
                   <div class="spark-effect"></div>
@@ -302,8 +287,8 @@ export function renderHome() {
 
           <!-- SCENE 7: "And we build those systems." + Logo Reveal -->
           <div class="story-scene scene-7">
-            <div class="scene-3c-content">
-              <h2 class="story-line" id="weBuildSystems">And <span id="weBuiltWord" style="display:inline-block;">we</span> build those systems.</h2>
+            <div class="scene-3c-content" style="justify-content: space-evenly;">
+              <h2 class="story-line" id="weBuildSystems">And <span id="weBuiltWord" style="display:inline-block; font-size: 1.2em; font-weight: 900;">we</span> build those systems.</h2>
               <div class="hero-reveal-logo-container" id="logoRevealWrap" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <div class="hero-reveal-logo-row" style="display: flex; align-items: center; justify-content: center; gap: clamp(10px, 3vw, 30px); width: 100%;">
                   <div class="reveal-wing reveal-wing--left" id="revealWingLeft"></div>
@@ -452,8 +437,17 @@ function initStoryScroll() {
   const magGlass = document.getElementById('magGlass');
   const rareLetters = gsap.utils.toArray('.rare-letter');
   const glassCracks = document.getElementById('glassCracks');
-  const fragments = gsap.utils.toArray('.fragment-shard');
   const weBuiltWord = document.getElementById('weBuiltWord');
+
+  const patternLayer = document.getElementById('patternParticlesLayer');
+  if (patternLayer) {
+    let pHTML = '';
+    for (let i = 0; i < 50; i++) {
+        pHTML += `<div class="effort-particle" style="position: absolute; top: 50%; left: 50%; width: ${Math.random()*15+5}px; height: ${Math.random()*15+5}px; background: rgba(255,255,255,0.9); opacity: 0; pointer-events: none; transform: translate(-50%, -50%); border-radius: 0; clip-path: polygon(${Math.random()*20}% 0%, 100% ${Math.random()*20}%, ${80+Math.random()*20}% 100%, 0% ${80+Math.random()*20}%);"></div>`;
+    }
+    patternLayer.innerHTML = pHTML;
+  }
+  const effortParticles = gsap.utils.toArray('.effort-particle');
 
   // SVGs
   const svgUnderline = document.querySelector('.svg-underline path');
@@ -472,8 +466,9 @@ function initStoryScroll() {
   const setupPath = (path) => {
     if (!path) return 0;
     const len = path.getTotalLength();
-    gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
-    return len;
+    // Use len + 100 to absolutely prevent stroke-linecap rounding bleed at edges when hidden
+    gsap.set(path, { strokeDasharray: len + 100, strokeDashoffset: len + 100 });
+    return len + 100;
   };
   setupPath(svgUnderline);
   svgHighlightPaths.forEach(setupPath);
@@ -483,10 +478,10 @@ function initStoryScroll() {
   if (activeLine) setupPath(activeLine);
 
   // Initial setup: Hide everything
-  gsap.set([s1Line, s2Line, s3Lines, s4Conclusion, s5Line, s6Line, activationWrap, weBuildLine, logoWrap, finalTagline], { autoAlpha: 0, y: 30 });
+  gsap.set([s1Line, s2Line, s3Lines, s4Conclusion, s5Line, s6Line, activationWrap, weBuildLine, finalTagline], { autoAlpha: 0, y: 30 });
+  if (logoWrap) gsap.set(logoWrap, { autoAlpha: 0, y: 100 });
   if (magGlass) gsap.set(magGlass, { autoAlpha: 0, x: -50, scale: 0.8 });
   if (glassCracks) gsap.set(glassCracks, { autoAlpha: 0 });
-  if (fragments.length) gsap.set(fragments, { autoAlpha: 0 });
 
   // Custom setup for silhouettes (from bottom, left, right)
   // Target the inner div to avoid overriding the CSS idleFloat animation
@@ -512,21 +507,98 @@ function initStoryScroll() {
   // The asynchronous phone pulse and blinking are driven purely by CSS keyframes.
   // Removing the old constant flash logic.
 
-  // Eyes tracking cursor logic
-  const trackingEyes = document.querySelectorAll('.tracking-eyes');
-  window.addEventListener('mousemove', (e) => {
-    // calculate mouse position relative to center (-0.5 to 0.5)
-    const mouseX = (e.clientX / window.innerWidth) - 0.5;
-    const mouseY = (e.clientY / window.innerHeight) - 0.5;
+  // Eyes tracking cursor logic (Pupils only)
+  const trackingPupils = document.querySelectorAll('.tracking-eyes circle');
+  const pupilSetters = Array.from(trackingPupils).map(pupil => ({
+    el: pupil,
+    xTo: gsap.quickTo(pupil, "x", { duration: 0.1, ease: "none" }),
+    yTo: gsap.quickTo(pupil, "y", { duration: 0.1, ease: "none" })
+  }));
 
-    // move eyes by max 10px depending on mouse
-    gsap.to(trackingEyes, {
-      x: mouseX * 20,
-      y: mouseY * 20,
-      duration: 0.3,
-      ease: "power2.out"
+  window.addEventListener('mousemove', (e) => {
+    pupilSetters.forEach(p => {
+      const rect = p.el.getBoundingClientRect();
+      // Center of pupil
+      const cx = rect.left + (rect.width / 2);
+      const cy = rect.top + (rect.height / 2);
+      
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      
+      const dist = Math.hypot(dx, dy);
+      const maxR = 5; // max 5px radius 
+      
+      let moveX = dx;
+      let moveY = dy;
+      if (dist > maxR) {
+        moveX = (dx / dist) * maxR;
+        moveY = (dy / dist) * maxR;
+      }
+      
+      p.xTo(moveX);
+      p.yTo(moveY);
     });
   });
+
+  // Interactive Magnifying Glass for Scene 2
+  const wordRare = document.getElementById('wordRare');
+  if (magGlass && wordRare && rareLetters.length > 0) {
+    gsap.set(magGlass, { autoAlpha: 0, top: 0, left: 0, xPercent: -50, yPercent: -50, scale: 1 });
+    
+    const letterCenters = [];
+    // We wait briefly for layout to settle or calculate it dynamically without scale
+    rareLetters.forEach(l => {
+        letterCenters.push({
+            el: l,
+            left: l.offsetLeft,
+            top: l.offsetTop,
+            width: l.offsetWidth,
+            height: l.offsetHeight
+        });
+    });
+
+    const glassToX = gsap.quickTo(magGlass, "x", {duration: 0.05, ease: "none"});
+    const glassToY = gsap.quickTo(magGlass, "y", {duration: 0.05, ease: "none"});
+    const glassAlpha = gsap.quickTo(magGlass, "autoAlpha", {duration: 0.1});
+
+    wordRare.addEventListener('mousemove', (e) => {
+      const rect = wordRare.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      glassAlpha(1);
+      glassToX(x);
+      glassToY(y);
+      
+      letterCenters.forEach(item => {
+        const lx = item.left + (item.width / 2);
+        const ly = item.top + (item.height / 2);
+        const dist = Math.hypot(x - lx, y - ly);
+        
+        if (dist < 50) {
+          const scaleAmt = 1 + (0.4 * (1 - (dist / 50)));
+          gsap.to(item.el, { scale: scaleAmt, color: "var(--green)", duration: 0.05, overwrite: "auto", ease: "none" });
+        } else {
+          gsap.to(item.el, { scale: 1, color: "inherit", duration: 0.05, overwrite: "auto", ease: "none" });
+        }
+      });
+    });
+    
+    wordRare.addEventListener('mouseleave', () => {
+      glassAlpha(0);
+      rareLetters.forEach(letter => {
+        gsap.to(letter, { scale: 1, color: "inherit", duration: 0.2, overwrite: "auto" });
+      });
+    });
+  }
+
+  // Orbital setup for Scene 2 Icons
+  if (uiBubblesLayer) {
+    gsap.set(uiBubblesLayer, { transformOrigin: "center center" });
+    gsap.to(uiBubblesLayer, { rotation: 360, duration: 40, repeat: -1, ease: "none" });
+    gsap.set(uiBubbles, { transformOrigin: "center center" });
+    gsap.to(uiBubbles, { rotation: -360, duration: 40, repeat: -1, ease: "none" });
+  }
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -558,25 +630,9 @@ function initStoryScroll() {
   tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to(fadingSilhouettes, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
     .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
-    // Magnifying glass syncs exactly with letters
-    .to(magGlass, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
-    .to(magGlass, { x: 250, duration: 1.4, ease: "none" }, "-=0.1")
-    .to(rareLetters, {
-      scale: 1.25,
-      color: "var(--green)",
-      stagger: {
-        each: 0.35, // 1.4s duration / 4 letters = 0.35s delay each
-        yoyo: true,
-        repeat: 1
-      },
-      duration: 0.35,
-      ease: "power1.inOut"
-    }, "<") // Start perfectly identically with the magGlass slide
-
-    .to(magGlass, { autoAlpha: 0, duration: 0.3 })
     // Background UI bubbles
-    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=2.0")
-    .to({}, { duration: 0.6 })
+    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=0.2")
+    .to({}, { duration: 2.2 })
     .to(uiBubbles, { autoAlpha: 0, scale: 0.5, duration: 0.5, stagger: 0.05, ease: "power3.in" })
     .to(s2Line, { autoAlpha: 0, duration: 0.5 }, "-=0.3");
   tl.to({}, { duration: 0.3 });
@@ -621,10 +677,41 @@ function initStoryScroll() {
     // Cracks form
     .to(glassCracks, { autoAlpha: 1, duration: 0.3 })
     .to(glassCracks.querySelectorAll('path'), { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, "<")
-    // Fragments fall
-    .to(fragments, { autoAlpha: 1, duration: 0.1 }, "-=0.2")
-    .to(fragments, { y: 80, x: () => Math.random() * 40 - 20, rotation: () => Math.random() * 180, autoAlpha: 0, duration: 1.0, ease: "power1.in" }, "-=0.1")
-    .to('.word-effort', { opacity: 0.7, duration: 0.5 }, "-=0.8")
+    // Fragments blast out (Step 1)
+    .to('.word-effort', { opacity: 0, duration: 0.1 }, "-=0.1")
+    .to(glassCracks, { opacity: 0, duration: 0.1 }, "<")
+    .to(effortParticles, {
+        autoAlpha: 1,
+        x: () => (Math.random() - 0.5) * window.innerWidth * 1.2,
+        y: () => (Math.random() - 0.5) * window.innerHeight * 1.2,
+        rotation: () => (Math.random() - 0.5) * 720,
+        scale: () => Math.random() * 2 + 0.8,
+        duration: 0.5,
+        ease: "power4.out",
+    }, "<")
+    // Particles transform and persist (Step 2)
+    .to(effortParticles, {
+        clipPath: "none",
+        borderRadius: "50%",
+        background: "var(--green)",
+        scale: () => Math.random() * 0.5 + 0.3,
+        autoAlpha: () => Math.random() * 0.5 + 0.3,
+        duration: 0.5,
+        ease: "power2.out",
+        onComplete: () => {
+          effortParticles.forEach(p => {
+            gsap.to(p, {
+              y: "+=150",
+              x: () => "+=" + (Math.random()*60 - 30),
+              rotation: "+=45",
+              duration: () => 4 + Math.random()*5,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut"
+            });
+          });
+        }
+    })
     .to({}, { duration: 0.8 })
     .to(s5Line, { autoAlpha: 0, duration: 0.5 });
   tl.to({}, { duration: 0.3 });
@@ -668,22 +755,20 @@ function initStoryScroll() {
   // ================= SCENE 7 : And we build those systems (Climax) =================
   tl.to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
     .to({}, { duration: 0.6 }) // Wait before "we" highlight
-    .to(weBuiltWord, { scale: 1.08, color: "var(--red)", duration: 0.2, ease: "power2.out" })
-    .to({}, { duration: 0.4 }) // Hold
-    .to(weBuiltWord, { scale: 1, color: "var(--green)", duration: 0.4, ease: "power2.inOut" })
-    .to(weBuildLine, { autoAlpha: 0, y: -20, duration: 0.5 }, "+=0.2")
+    .to(weBuiltWord, { scale: 1.2, color: "var(--green)", duration: 0.3, ease: "power2.out" })
+    .to(weBuiltWord, { scale: 1.1, color: "var(--green)", duration: 0.4, ease: "power2.inOut" }, "+=0.1")
 
     // Kllezo Logo Rises smoothly
-    .to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.2")
-    .to(finalLogo, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "<")
+    .to(logoWrap, { autoAlpha: 1, y: 0, duration: 1.2, ease: "power3.out" }, "-=0.4")
+    .to(finalLogo, { autoAlpha: 1, y: 0, duration: 1.2, ease: "power3.out" }, "<")
 
     // Wings glide inward
-    .to([wingLeft, wingRight], { autoAlpha: 1, x: 0, duration: 1.0, ease: "power2.out" }, "-=0.4")
+    .to([wingLeft, wingRight], { autoAlpha: 1, x: 0, duration: 1.2, ease: "power2.out" }, "-=0.8")
     // Subtle flap (one cycle)
-    .to([wingLeft, wingRight], { scaleY: 0.6, duration: 0.15, yoyo: true, repeat: 1, ease: "power1.inOut" }, "-=0.2")
+    .to([wingLeft, wingRight], { scaleY: 0.6, duration: 0.2, yoyo: true, repeat: 1, ease: "power1.inOut" }, "-=0.2")
 
     // Tagline fades in
-    .to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "+=0.1");
+    .to(finalTagline, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, "+=0.1");
 
   tl.to({}, { duration: 1.0 });
 }

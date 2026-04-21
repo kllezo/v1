@@ -41,41 +41,15 @@ const services = [
       'Intelligent response workflows',
     ],
     impact: 'Your business responding — even while you sleep.',
-  },
-  {
-    icon: '/icon-growth.svg.png',
-    title: 'Growth Strategy & Consultancy',
-    desc: `Clarity over chaos. Direction over noise. Sharp positioning and calculated moves — growth that feels intentional, not accidental.`,
-    capabilities: [
-      'Market research & competitive analysis',
-      'Brand positioning & messaging strategy',
-      'Go-to-market planning',
-      'Revenue growth frameworks',
-      'Performance analytics & KPI tracking',
-    ],
-    impact: 'Strategy that makes every move count.',
-  },
-  {
-    icon: '/icon-workflow.svg.png',
-    title: 'Workflow Automation',
-    desc: `Manual is outdated. Systems that connect, trigger, and execute — silent engines running your backend at full throttle.`,
-    capabilities: [
-      'Business process automation',
-      'Tool & platform integrations',
-      'Automated reporting & dashboards',
-      'Task routing & approval workflows',
-      'Custom API-driven automation',
-    ],
-    impact: 'Your operations — finally on autopilot.',
-  },
+  }
 ];
 
 export function renderServices() {
   const blocksHTML = services
     .map(
       (s, i) => `
-    <div class="service-block" data-index="${i}">
-      <div class="service-block__inner">
+    <div class="service-block" data-index="${i}" style="cursor: pointer; margin-bottom: 2rem;">
+      <div class="service-block__inner" style="pointer-events: none;">
         <div class="service-block__icon-col">
           <div class="service-block__icon">
             <img src="${s.icon}" alt="${s.title}" />
@@ -84,10 +58,13 @@ export function renderServices() {
         <div class="service-block__text-col">
           <h3 class="service-block__title">${s.title}</h3>
           <p class="service-block__desc body-text">${s.desc}</p>
-          <ul class="service-block__capabilities">
-            ${s.capabilities.map((c) => `<li>${c}</li>`).join('')}
-          </ul>
-          <p class="impact-line">${s.impact}</p>
+          <div class="service-block__expandable" style="height: 0; overflow: hidden; opacity: 0;">
+            <ul class="service-block__capabilities">
+              ${s.capabilities.map((c) => `<li>${c}</li>`).join('')}
+            </ul>
+            <p class="impact-line">${s.impact}</p>
+          </div>
+          <button class="expand-btn body-text" style="pointer-events: none; margin-top: 15px; background: none; border: none; color: var(--green); font-weight: bold; display: inline-flex; align-items: center; gap: 8px;">View Details <span class="expand-icon" style="transition: transform 0.3s;">+</span></button>
         </div>
       </div>
     </div>
@@ -100,7 +77,29 @@ export function renderServices() {
       <h1 class="reveal">What We Build</h1>
       <p class="tagline reveal reveal-delay-1">Systems, stories, and strategies — engineered for growth.</p>
     </div>
-    ${blocksHTML}
+    <div class="services-container" style="max-width: var(--max-width); margin: 0 auto; padding: 2rem var(--page-pad); display: flex; flex-direction: column; gap: 1rem;">
+      ${blocksHTML}
+    </div>
+    
+    <section class="how-we-work" style="max-width: var(--max-width); margin: 4rem auto 2rem auto; padding: 0 var(--page-pad);">
+      <h2 class="reveal" style="text-align: center; margin-bottom: 3rem;">How We Work</h2>
+      <div class="work-steps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        
+        <div class="work-step glass-tab reveal" style="padding: 2.5rem; text-align: center;">
+          <div class="step-number" style="font-size: 3rem; font-weight: 800; color: var(--green); opacity: 0.2; margin-bottom: 1rem; line-height: 1;">01</div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.5rem; color: var(--green);">Growth Strategy & Consultancy</h3>
+          <p class="body-text">Clarity over chaos. Direction over noise. Sharp positioning and calculated moves — growth that feels intentional, not accidental.</p>
+        </div>
+        
+        <div class="work-step glass-tab reveal reveal-delay-1" style="padding: 2.5rem; text-align: center;">
+          <div class="step-number" style="font-size: 3rem; font-weight: 800; color: var(--green); opacity: 0.2; margin-bottom: 1rem; line-height: 1;">02</div>
+          <h3 style="margin-bottom: 1rem; font-size: 1.5rem; color: var(--green);">Workflow Automation</h3>
+          <p class="body-text">Manual is outdated. Systems that connect, trigger, and execute — silent engines running your backend at full throttle.</p>
+        </div>
+
+      </div>
+    </section>
+
     <section class="cta-section">
       <h2 class="reveal">Let's build your growth engine.</h2>
       <a href="#/contact" class="btn btn--primary reveal reveal-delay-1">Connect Now</a>
@@ -144,42 +143,62 @@ export function initServices() {
   const blocks = document.querySelectorAll('.service-block');
 
   blocks.forEach((block, index) => {
-    const isEven = index % 2 !== 0; // The second block (index 1) is visually even based on CSS nth-child
-
+    // Reveal animation like original
     const iconCol = block.querySelector('.service-block__icon-col');
     const icon = block.querySelector('.service-block__icon img');
-    const textElements = block.querySelectorAll('.service-block__title, .service-block__desc, .service-block__capabilities li, .impact-line');
+    const textElements = block.querySelectorAll('.service-block__title, .service-block__desc');
+    const isEven = index % 2 !== 0;
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: block,
-        start: 'top 80%',
+        start: 'top 85%',
         once: true,
       }
     });
 
-    // Alternating slide direction
     const iconX = isEven ? 60 : -60;
     const textX = isEven ? -60 : 60;
 
-    // Slide in wrappers
-    tl.fromTo(iconCol,
-      { x: iconX, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }
-    );
+    tl.fromTo(block, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+    tl.fromTo(iconCol, { x: iconX, opacity: 0 }, { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }, "<");
+    tl.fromTo(icon, { scale: 0.9, rotation: isEven ? -5 : 5 }, { scale: 1, rotation: 0, duration: 1.2, ease: 'elastic.out(1, 0.5)' }, '-=0.7');
+    tl.fromTo(textElements, { opacity: 0, y: 15, x: textX }, { opacity: 1, y: 0, x: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out' }, '-=1.0');
 
-    // Icon pop and slight rotate
-    tl.fromTo(icon,
-      { scale: 0.9, rotation: isEven ? -5 : 5 },
-      { scale: 1, rotation: 0, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
-      '-=0.7'
-    );
+    // Click interactions
+    const content = block.querySelector('.service-block__expandable');
+    const expandIcon = block.querySelector('.expand-icon');
+    let isExpanded = false;
 
-    // Stagger text lines with fade and translateY
-    tl.fromTo(textElements,
-      { opacity: 0, y: 15, x: textX },
-      { opacity: 1, y: 0, x: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out' },
-      '-=1.0'
+    gsap.set(content, { height: 0 });
+
+    block.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        block.classList.add('is-active');
+        gsap.to(content, { height: "auto", opacity: 1, duration: 0.4, ease: "power2.out" });
+        gsap.to(expandIcon, { rotation: 45, duration: 0.3 });
+      } else {
+        block.classList.remove('is-active');
+        gsap.to(content, { height: 0, opacity: 0, duration: 0.4, ease: "power2.inOut" });
+        gsap.to(expandIcon, { rotation: 0, duration: 0.3 });
+      }
+    });
+  });
+
+  // Reveal 'How We Work'
+  const hwBlocks = document.querySelectorAll('.how-we-work .reveal');
+  hwBlocks.forEach((el) => {
+    gsap.fromTo(el,
+      { opacity: 0, y: 40 },
+      { 
+        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 90%',
+          once: true
+        }
+      }
     );
   });
 }

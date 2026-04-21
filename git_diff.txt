@@ -1,0 +1,1385 @@
+﻿diff --git a/pages/home.js b/pages/home.js
+index ce6374f..3ba690c 100644
+--- a/pages/home.js
++++ b/pages/home.js
+@@ -22,143 +22,39 @@ const services = [
+     desc: `Conversations that never sleep.\nInstant replies. Intelligent follow-ups.\nHuman-like interactions powered by automation.`,
+     impact: 'Your business responding ΓÇö even while you sleep.',
+   },
+-  {
+-    icon: '/icon-growth.svg.png',
+-    title: 'Growth Strategy & Consultancy',
+-    desc: `Clarity over chaos. Direction over noise.\nSharp positioning. Calculated moves.\nGrowth that feels intentional ΓÇö not accidental.`,
+-    impact: 'Strategy that makes every move count.',
+-  },
+-  {
+-    icon: '/icon-workflow.svg.png',
+-    title: 'Workflow Automation',
+-    desc: `Manual is outdated.\nSystems that connect, trigger, and execute.\nSilent engines running your backend at full throttle.`,
+-    impact: 'Your operations ΓÇö finally on autopilot.',
+-  },
+ ];
+ 
+ export function renderHome() {
+   const isMobile = window.innerWidth <= 768;
+-  const config = isMobile ? [
+-    { id: 'ml', pos: 'top: 30%; left: -5%;', size: 200 },
+-    { id: 'bml', pos: 'bottom: -5%; left: 10%;', size: 240 },
+-    { id: 'bc', pos: 'bottom: -2%; left: 40%;', size: 260 },
+-    { id: 'bmr', pos: 'bottom: -5%; left: 70%;', size: 240 },
+-    { id: 'mr', pos: 'top: 30%; right: -5%;', size: 200 }
+-  ] : [
+-    { id: 'tl', pos: 'top: 15%; left: -5%;', size: 300 },
+-    { id: 'ml', pos: 'top: 45%; left: -3%;', size: 280 },
+-    { id: 'bl', pos: 'bottom: -10%; left: 0%;', size: 350 },
+-    { id: 'bml', pos: 'bottom: -5%; left: 22%;', size: 300 },
+-    { id: 'bc', pos: 'bottom: -2%; left: 44%;', size: 280 },
+-    { id: 'bmr', pos: 'bottom: -5%; left: 60%;', size: 300 },
+-    { id: 'br', pos: 'bottom: -10%; left: 80%;', size: 350 },
+-    { id: 'mr', pos: 'top: 45%; right: -3%;', size: 280 },
+-    { id: 'tr', pos: 'top: 15%; right: -5%;', size: 300 }
+-  ];
+ 
+-  const silhouettes = config.map((c, i) => {
+-    let bodyPath = '', headPath = '', armPath = '', phoneTransform = '', eyeMarkup = '';
+-    const blinkWait = (3 + Math.random() * 5).toFixed(2);
+-    const trackingClass = Math.random() > 0.2 ? 'tracking-eyes' : 'static-eyes';
+-    const idleDelay = -(Math.random() * 4).toFixed(2);
+-    const depthClass = i % 2 === 0 ? 'depth-mid' : 'depth-front';
+-
+-    // Abstracted reusable SVG generators for common details
+-    const renderPhone = (tx, ty, rot) => `
+-      <g transform="translate(${tx}, ${ty}) rotate(${rot})">
+-        <rect x="0" y="0" width="22" height="40" rx="3" fill="#222" stroke="#000000" stroke-width="4"/>
+-        <rect x="3" y="3" width="16" height="34" rx="2" fill="#ffffff" opacity="0.9"/>
+-        <rect x="3" y="3" width="16" height="34" rx="2" fill="#ffffff" class="phone-pulse" style="--pulse-wait: ${blinkWait}s"/>
+-        <ellipse cx="11" cy="40" rx="14" ry="10" fill="#000000"/>
+-      </g>
+-    `;
+-
+-    const renderEyes = (lx, ly, lr, rx, ry, rr) => `
+-      <g class="sil-eyes ${trackingClass} async-blink" style="--blink-del: ${blinkWait}s" opacity="0" transform-origin="${lx + (rx - lx) / 2} ${ly}">
+-        <circle cx="${lx}" cy="${ly}" r="${lr}" fill="#ffffff"/>
+-        <circle cx="${rx}" cy="${ry}" r="${rr}" fill="#ffffff"/>
+-      </g>
+-    `;
+-
+-    // Extremely specific, hand-tuned SVG geometric mapping per character ID
+-    if (c.id === 'tl') {
+-      bodyPath = `M 0 50 Q 80 50 80 100 Q 80 150 0 150 Z`;
+-      headPath = `M 60 70 C 120 70, 130 110, 70 110 Z`;
+-      armPath = `M 70 120 Q 140 130 160 100`;
+-      phoneTransform = renderPhone(150, 80, 20);
+-      eyeMarkup = renderEyes(82, 85, 2, 95, 90, 4);
+-    } else if (c.id === 'ml') {
+-      bodyPath = `M 0 100 Q 60 100 80 150 Q 60 200 0 200 Z`;
+-      headPath = `M 60 120 C 130 110, 130 150, 70 160 Z`;
+-      armPath = `M 80 150 Q 140 130 120 40`;
+-      phoneTransform = renderPhone(100, 10, 10);
+-      eyeMarkup = renderEyes(87, 132, 2, 100, 135, 4);
+-    } else if (c.id === 'bl') {
+-      bodyPath = `M 0 200 L 0 130 Q 50 80 100 120 Q 110 200 110 200 Z`;
+-      headPath = `M 80 90 A 35 35 0 1 1 80 89.9 Z`;
+-      armPath = `M 50 120 Q 60 20 120 30`;
+-      phoneTransform = renderPhone(110, 0, 15);
+-      eyeMarkup = renderEyes(80, 80, 2, 100, 85, 4);
+-    } else if (c.id === 'bml') {
+-      bodyPath = `M 30 200 Q 50 100 90 90 Q 140 100 140 200 Z`;
+-      headPath = `M 95 65 A 30 30 0 1 1 95 64.9 Z`;
+-      armPath = `M 60 100 Q 80 10 130 10`;
+-      phoneTransform = renderPhone(120, -20, 10);
+-      eyeMarkup = renderEyes(90, 55, 2, 110, 60, 4);
+-    } else if (c.id === 'bc') {
+-      bodyPath = `M 50 200 Q 60 100 100 90 Q 140 100 150 200 Z`;
+-      headPath = `M 100 60 A 30 30 0 1 1 100 59.9 Z`;
+-      armPath = `M 130 110 Q 160 30 110 -10`;
+-      phoneTransform = renderPhone(97, -40, 0);
+-      eyeMarkup = renderEyes(85, 55, 2, 110, 55, 4);
+-    } else if (c.id === 'bmr') {
+-      bodyPath = `M 60 200 Q 60 100 110 90 Q 150 100 170 200 Z`;
+-      headPath = `M 105 65 A 30 30 0 1 1 105 64.9 Z`;
+-      armPath = `M 130 110 Q 140 10 70 10`;
+-      phoneTransform = renderPhone(60, -20, -10);
+-      eyeMarkup = renderEyes(90, 60, 4, 110, 55, 2);
+-    } else if (c.id === 'br') {
+-      bodyPath = `M 200 200 L 200 130 Q 150 80 100 120 Q 90 200 90 200 Z`;
+-      headPath = `M 120 90 A 35 35 0 1 1 120 89.9 Z`;
+-      armPath = `M 150 120 Q 140 20 80 30`;
+-      phoneTransform = renderPhone(65, 0, -15);
+-      eyeMarkup = renderEyes(100, 85, 4, 120, 80, 2);
+-    } else if (c.id === 'mr') {
+-      bodyPath = `M 200 100 Q 140 100 120 150 Q 140 200 200 200 Z`;
+-      headPath = `M 140 120 C 70 110, 70 150, 130 160 Z`;
+-      armPath = `M 120 150 Q 60 130 80 40`;
+-      phoneTransform = renderPhone(75, 10, -10);
+-      eyeMarkup = renderEyes(100, 135, 4, 113, 132, 2);
+-    } else if (c.id === 'tr') {
+-      bodyPath = `M 200 50 Q 120 50 120 100 Q 120 150 200 150 Z`;
+-      headPath = `M 140 70 C 80 70, 70 110, 130 110 Z`;
+-      armPath = `M 130 120 Q 60 130 40 100`;
+-      phoneTransform = renderPhone(25, 80, -20);
+-      eyeMarkup = renderEyes(105, 90, 4, 118, 85, 2);
+-    }
++  // Exact estimated coordinates mapping the white phone and eye cutouts in people.png
++  // The interactive glow elements will sit securely behind these coordinates.
++  const spots = [
++    { pX: 13, pY: 18, eX: 8, eY: 22 }, // Left Top
++    { pX: 14.5, pY: 41, eX: 8, eY: 47 },     // Left Mid
++    { pX: 21.5, pY: 57, eX: 23, eY: 72 },    // Bottom 1
++    { pX: 37.5, pY: 65, eX: 36, eY: 70 },    // Bottom 2
++    { pX: 47.5, pY: 61, eX: 52.5, eY: 72 },  // Bottom 3
++    { pX: 64.5, pY: 65, eX: 68, eY: 71 },    // Bottom 4
++    { pX: 76.5, pY: 58, eX: 83.5, eY: 66 },  // Bottom 5
++    { pX: 85, pY: 46, eX: 91, eY: 52 },      // Right Mid
++    { pX: 84, pY: 22, eX: 90, eY: 26 },      // Right Top
++  ];
+ 
+-    return `
+-      <div class="silhouette-wrap ${depthClass} idle-float" id="sil-${c.id}" style="position: absolute; ${c.pos} width: ${c.size}px; height: ${c.size}px; z-index: ${Math.floor(c.size)}; --idle-del: ${idleDelay}s;">
+-        <div class="sil-inner" style="width: 100%; height: 100%;">
+-          <svg viewBox="0 0 200 200" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="overflow: visible;">
+-            <!-- Arm behind body -->
+-            <path d="${armPath}" fill="none" stroke="#000000" stroke-width="24" stroke-linecap="round"/>
+-            ${phoneTransform}
+-            <!-- Torso & Head -->
+-            <path d="${bodyPath}" fill="#000000"/>
+-            <path d="${headPath}" fill="#000000"/>
+-            <!-- Eyes -->
+-            ${eyeMarkup}
+-          </svg>
+-        </div>
+-      </div>
+-    `;
+-  }).join('');
++  const interactives = spots.map((s, i) => `
++    <div class="interactive-glow interactive-phone" style="left: ${s.pX}%; top: ${s.pY}%; --px: ${s.pX}; --py: ${s.pY};">
++      <div class="phone-screen-glow phone-pulse" style="--pulse-wait: ${(3 + Math.random() * 5).toFixed(2)}s"></div>
++    </div>
++    <div class="interactive-glow interactive-eye" style="left: ${s.eX}%; top: ${s.eY}%; --px: ${s.eX}; --py: ${s.eY};">
++      <div class="eye-glow"></div>
++    </div>
++  `).join('');
+ 
+   return `
+     <section class="story-scroll advanced-story" id="storyScroll">
+       <div id="sceneDarkener" class="scene-darkener"></div>
+       <canvas id="systemNetworkBg" class="system-network-bg"></canvas>
++      <div id="persistentParticles" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 10;"></div>
+       <div class="story-scroll__pinned" id="storyPinned">
+         
+         <div class="scroll-guide" id="scrollGuide">
+@@ -171,19 +67,6 @@ export function renderHome() {
+         </div>
+ 
+         <!-- GLOBAL VISUAL LAYERS -->
+-        <div class="global-layer sil-layer" id="silLayer">
+-           ${silhouettes}
+-        </div>
+-        
+-        <div class="global-layer ui-bubbles-layer" id="uiBubblesLayer">
+-           <div class="ui-bubble" style="top: 30%; left: 25%;">≡ƒÆ¼</div>
+-           <div class="ui-bubble" style="top: 45%; right: 28%;">Γ¥ñ∩╕Å</div>
+-           <div class="ui-bubble" style="top: 60%; left: 15%;">≡ƒöö</div>
+-           <div class="ui-bubble" style="top: 35%; right: 15%;">Γ£ô</div>
+-           <div class="ui-popup" style="top: 50%; left: 30%;">New like</div>
+-           <div class="ui-popup" style="top: 25%; right: 35%;">Trending</div>
+-        </div>
+-        
+         <div class="global-layer tools-layer" id="toolsLayer">
+            <!-- Top Left -->
+            <svg class="scene3-icon" style="top: 15%; left: 18%;" viewBox="0 0 24 24"><path fill="var(--green)" d="M4 6h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2zm8 11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3z"/></svg>
+@@ -215,14 +98,30 @@ export function renderHome() {
+ 
+         <div class="story-container">
+           <!-- SCENE 1: HOOK -->
+-          <div class="story-scene scene-1">
+-            <h2 class="story-line">The internet<br>is crowded.</h2>
++          <div class="story-scene scene-1" id="scene1">
++            <div class="scene-1-crowd-wrapper" id="scene1Crowd">
++              <div class="crowd-illustration"></div>
++              <div class="crowd-interact-layer">
++                 ${interactives}
++              </div>
++            </div>
++            <h2 class="story-line" style="transform: translateY(-60px);">The internet<br>is crowded.</h2>
+           </div>
+           
+           <!-- SCENE 2: ATTENTION IS RARE -->
+-          <div class="story-scene scene-2">
+-            <h2 class="story-line text-large relative" style="line-height:1.1;">
+-              Attention<br>is <span class="word-rare relative" id="wordRare" style="display:inline-block;">
++          <div class="story-scene scene-2" id="scene2">
++            <!-- Strict safe zone: Floating icons around the text, but spaced 120px away -->
++            <div class="ui-bubbles-layer" id="uiBubblesLayer">
++              <div class="ui-bubble" style="top: 20%; left: 15%;">≡ƒÆ¼</div>
++              <div class="ui-bubble" style="top: 25%; right: 20%;">Γ¥ñ∩╕Å</div>
++              <div class="ui-bubble" style="bottom: 20%; left: 20%;">≡ƒöö</div>
++              <div class="ui-bubble" style="bottom: 15%; right: 15%;">Γ£ô</div>
++              <div class="ui-popup" style="top: 15%; left: 35%;">New like</div>
++              <div class="ui-popup" style="bottom: 15%; right: 35%;">Trending</div>
++            </div>
++            
++            <h2 class="story-line text-large relative" style="line-height:1.1; z-index: 5; margin-top: 40px;">
++              Attention<br>is <span class="word-rare relative" id="wordRare" style="display:inline-block; cursor: none;">
+                 <span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">A</span><span class="rare-letter inline-block">R</span><span class="rare-letter inline-block">E</span><span class="rare-letter inline-block">.</span>
+                 <svg class="svg-underline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+                   <path d="M 5 15 Q 50 20, 95 12" />
+@@ -257,15 +156,8 @@ export function renderHome() {
+ 
+           <!-- SCENE 5: REALIZATION -->
+           <div class="story-scene scene-5">
+-            <h2 class="story-line">Because growth today<br>isn't <span class="word-effort relative inline-block">
++            <h2 class="story-line">Because growth today<br>isn't <span class="word-effort relative inline-block" id="effortText">
+               effort.
+-              <svg class="glass-cracks absolute" id="glassCracks" viewBox="0 0 200 60" style="top:0; left:0; width:100%; height:100%; pointer-events:none;">
+-                <path d="M 10 30 Q 30 10 50 25 T 90 20 T 130 35 T 190 20 M 40 20 Q 60 50 80 40 M 120 30 Q 140 5 160 20 M 80 20 L 90 45" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none" opacity="0"/>
+-              </svg>
+-              <div class="fragment-shard" ></div>
+-              <div class="fragment-shard" style="top: 20%; left: 30%;"></div>
+-              <div class="fragment-shard" style="top: 60%; left: 70%;"></div>
+-              <div class="fragment-shard" style="top: 40%; left: 80%;"></div>
+             </span></h2>
+           </div>
+ 
+@@ -282,7 +174,7 @@ export function renderHome() {
+               </div>
+             </div>
+             
+-            <div class="activation-nodes" id="activationNodesWrap" style="margin-top: 15vh; transform: scale(0.9);">
++            <div class="activation-nodes" id="activationNodesWrap" style="margin-top: 30vh; transform: scale(1.0);">
+               ${services.map((s, i) => `
+                 <div class="activation-node sequential-node" data-index="${i}">
+                   <div class="spark-effect"></div>
+@@ -290,7 +182,7 @@ export function renderHome() {
+                   <div class="activation-node__icon">
+                     <img src="${s.icon}" alt="${s.title}" />
+                   </div>
+-                  <p class="activation-node__label" style="font-size: 0.8em; margin-top: 10px;">${s.title}</p>
++                  <p class="activation-node__label" style="font-size: 1.1em; margin-top: 15px;">${s.title}</p>
+                 </div>
+               `).join('')}
+               <svg class="system-activation__line floating-line" id="systemLine" xmlns="http://www.w3.org/2000/svg" style="z-index:-1;">
+@@ -303,7 +195,7 @@ export function renderHome() {
+           <!-- SCENE 7: "And we build those systems." + Logo Reveal -->
+           <div class="story-scene scene-7">
+             <div class="scene-3c-content">
+-              <h2 class="story-line" id="weBuildSystems">And <span id="weBuiltWord" style="display:inline-block;">we</span> build those systems.</h2>
++              <h2 class="story-line" id="weBuildSystems" style="margin-bottom: 5vh;">And <span id="weBuiltWord" style="display:inline-block; font-weight: 900; font-size: 1.15em;">we</span> build those systems.</h2>
+               <div class="hero-reveal-logo-container" id="logoRevealWrap" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                 <div class="hero-reveal-logo-row" style="display: flex; align-items: center; justify-content: center; gap: clamp(10px, 3vw, 30px); width: 100%;">
+                   <div class="reveal-wing reveal-wing--left" id="revealWingLeft"></div>
+@@ -423,14 +315,13 @@ function initStoryScroll() {
+   const scene7 = document.querySelector('.scene-7');
+ 
+   // Layers
+-  const silLayer = document.getElementById('silLayer');
+   const uiBubblesLayer = document.getElementById('uiBubblesLayer');
+   const toolsLayer = document.getElementById('toolsLayer');
+   const graphLayer = document.getElementById('graphLayer');
+   const sceneDarkener = document.getElementById('sceneDarkener');
+ 
+   // Specific elements
+-  const silhouettes = gsap.utils.toArray('.silhouette-wrap');
++  const scene1Crowd = document.getElementById('scene1Crowd');
+   const uiBubbles = gsap.utils.toArray('.ui-bubble, .ui-popup');
+   const toolsIcons = gsap.utils.toArray('.scene3-icon');
+ 
+@@ -451,8 +342,7 @@ function initStoryScroll() {
+   // Extras
+   const magGlass = document.getElementById('magGlass');
+   const rareLetters = gsap.utils.toArray('.rare-letter');
+-  const glassCracks = document.getElementById('glassCracks');
+-  const fragments = gsap.utils.toArray('.fragment-shard');
++  const effortText = document.getElementById('effortText');
+   const weBuiltWord = document.getElementById('weBuiltWord');
+ 
+   // SVGs
+@@ -475,8 +365,15 @@ function initStoryScroll() {
+     gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+     return len;
+   };
++  const setupPathHide = (path) => {
++    if (!path) return 0;
++    const len = path.getTotalLength();
++    gsap.set(path, { strokeDasharray: len + 10, strokeDashoffset: len + 10, autoAlpha: 0 });
++    return len;
++  };
++
+   setupPath(svgUnderline);
+-  svgHighlightPaths.forEach(setupPath);
++  svgHighlightPaths.forEach(setupPathHide);
+   setupPath(systemsLasso);
+   if (trendLine) setupPath(trendLine);
+   if (trendGlow) setupPath(trendGlow);
+@@ -488,17 +385,8 @@ function initStoryScroll() {
+   if (glassCracks) gsap.set(glassCracks, { autoAlpha: 0 });
+   if (fragments.length) gsap.set(fragments, { autoAlpha: 0 });
+ 
+-  // Custom setup for silhouettes (from bottom, left, right)
+-  // Target the inner div to avoid overriding the CSS idleFloat animation
+-  const silInners = document.querySelectorAll('.sil-inner');
+-  silhouettes.forEach((sil, i) => {
+-    let startX = 0, startY = 0;
+-    if (i < 5) startX = -window.innerWidth * 0.6; // slide from left
+-    else if (i < 10) startX = window.innerWidth * 0.6;  // slide from right
+-    else startY = '20vh'; // slide from bottom
+-    gsap.set(sil, { autoAlpha: 0 });
+-    gsap.set(silInners[i], { x: startX, y: startY });
+-  });
++  // Scene 1 custom setup: start slightly scaled up to slide inward from edges
++  if (scene1Crowd) gsap.set(scene1Crowd, { autoAlpha: 0, scale: 1.08 });
+ 
+   gsap.set(uiBubbles, { autoAlpha: 0, scale: 0.5 });
+   gsap.set(toolsIcons, { autoAlpha: 0, scale: 0.5, y: 20 });
+@@ -508,26 +396,103 @@ function initStoryScroll() {
+   if (wingLeft) gsap.set(wingLeft, { autoAlpha: 0, x: -150 });
+   if (wingRight) gsap.set(wingRight, { autoAlpha: 0, x: 150 });
+   if (finalLogo) gsap.set(finalLogo, { autoAlpha: 0, y: 50 });
++  if (logoWrap) gsap.set(logoWrap, { autoAlpha: 0, y: 100 }); // prepare for smooth bottom reveal
++  if (weBuiltWord) gsap.set(weBuiltWord, { autoAlpha: 0, scale: 0.8 });
++
++  // Persistent Particle Generation for Scene 5
++  const persistentParticles = document.getElementById('persistentParticles');
++  const outerList = [];
++  if (persistentParticles) {
++    for (let i = 0; i < 60; i++) {
++       const outer = document.createElement('div');
++       gsap.set(outer, { position: 'absolute', top: '50%', left: '50%', x: 0, y: 0, width: 0, height: 0, autoAlpha: 0 });
++       const inner = document.createElement('div');
++       gsap.set(inner, {
++         position: 'absolute',
++         top: '-4px', left: '-4px', 
++         width: Math.random() * 8 + 2,
++         height: Math.random() * 8 + 2,
++         backgroundColor: 'var(--green)',
++         borderRadius: Math.random() > 0.5 ? '50%' : '2px',
++       });
++       outer.appendChild(inner);
++       persistentParticles.appendChild(outer);
++       outerList.push(outer);
++       
++       gsap.to(inner, {
++         x: "random(-40, 40)",
++         y: "random(-40, 40)",
++         rotation: "random(-180, 180)",
++         duration: "random(8, 15)",
++         repeat: -1,
++         yoyo: true,
++         ease: "sine.inOut"
++       });
++    }
++  }
+ 
+-  // The asynchronous phone pulse and blinking are driven purely by CSS keyframes.
+-  // Removing the old constant flash logic.
+-
+-  // Eyes tracking cursor logic
+-  const trackingEyes = document.querySelectorAll('.tracking-eyes');
++  // Eyes tracking cursor logic for Scene 1
++  const trackingEyes = document.querySelectorAll('.interactive-eye');
++  const trackingPhones = document.querySelectorAll('.interactive-phone');
+   window.addEventListener('mousemove', (e) => {
+-    // calculate mouse position relative to center (-0.5 to 0.5)
+     const mouseX = (e.clientX / window.innerWidth) - 0.5;
+     const mouseY = (e.clientY / window.innerHeight) - 0.5;
+ 
+-    // move eyes by max 10px depending on mouse
++    // move eyes very subtly (max 4-6px) depending on mouse
+     gsap.to(trackingEyes, {
+-      x: mouseX * 20,
+-      y: mouseY * 20,
++      x: mouseX * 10, // ~5px max since mouseX is -0.5 to 0.5
++      y: mouseY * 10,
+       duration: 0.3,
+       ease: "power2.out"
+     });
++    // Phones rotate slightly
++    gsap.to(trackingPhones, {
++      rotation: mouseX * 16, // +- 8deg
++      duration: 0.5,
++      ease: "power2.out"
++    });
+   });
+ 
++  // Interactive Magnifying Glass for Scene 2
++  const wordRare = document.getElementById('wordRare');
++  if (magGlass && wordRare && rareLetters.length > 0) {
++    gsap.set(magGlass, { autoAlpha: 0, top: 0, left: 0, xPercent: -50, yPercent: -50, scale: 1 });
++    
++    wordRare.addEventListener('mousemove', (e) => {
++      const rect = wordRare.getBoundingClientRect();
++      const x = e.clientX - rect.left;
++      const y = e.clientY - rect.top;
++      
++      gsap.to(magGlass, { autoAlpha: 1, x: x, y: y, duration: 0.1, overwrite: "auto" });
++      
++      rareLetters.forEach(letter => {
++        const lRect = letter.getBoundingClientRect();
++        const lx = lRect.left + lRect.width / 2;
++        const ly = lRect.top + lRect.height / 2;
++        const dist = Math.hypot(e.clientX - lx, e.clientY - ly);
++        
++        if (dist < 40) {
++          gsap.to(letter, { scale: 1.3, color: "var(--green)", duration: 0.15, overwrite: "auto" });
++        } else {
++          gsap.to(letter, { scale: 1, color: "inherit", duration: 0.15, overwrite: "auto" });
++        }
++      });
++    });
++    
++    wordRare.addEventListener('mouseleave', () => {
++      gsap.to(magGlass, { autoAlpha: 0, duration: 0.3, overwrite: "auto" });
++      gsap.to(rareLetters, { scale: 1, color: "inherit", duration: 0.3, overwrite: "auto" });
++    });
++  }
++
++  // Orbital setup for Scene 2 Icons
++  if (uiBubblesLayer) {
++    gsap.set(uiBubblesLayer, { transformOrigin: "center center" });
++    gsap.to(uiBubblesLayer, { rotation: 360, duration: 40, repeat: -1, ease: "none" });
++    gsap.set(uiBubbles, { transformOrigin: "center center" });
++    gsap.to(uiBubbles, { rotation: -360, duration: 40, repeat: -1, ease: "none" });
++  }
++
+   const tl = gsap.timeline({
+     scrollTrigger: {
+       trigger: container,
+@@ -543,40 +508,18 @@ function initStoryScroll() {
+ 
+   // ================= SCENE 1 : It's crowded =================
+   tl.to(s1Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+-    .to(silhouettes, { autoAlpha: 1, duration: 0.8, stagger: 0.05, ease: "power1.inOut" }, "-=0.4")
+-    .to(silInners, { x: 0, y: 0, duration: 0.8, stagger: 0.05, ease: "power3.out" }, "<")
+-    // Eyes appear
+-    .to('.sil-eyes', { autoAlpha: 1, duration: 0.3 }, "-=0.2")
++    .to(scene1Crowd, { autoAlpha: 1, scale: 1, duration: 0.6, ease: "power2.out" }, "-=0.4")
+     .to({}, { duration: 0.8 })
+     .to(s1Line, { autoAlpha: 0, duration: 0.5 });
+   tl.to({}, { duration: 0.3 });
+ 
+   // ================= SCENE 2 : Attention is RARE =================
+-  const fadingSilhouettes = silhouettes.slice(1, 11); // keep 0 and 11
+-  const remainingSilhouettes = [silhouettes[0], silhouettes[11]];
+-
+   tl.to(s2Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+-    .to(fadingSilhouettes, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
++    .to(scene1Crowd, { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" }, "<")
+     .to(svgUnderline, { strokeDashoffset: 0, duration: 0.5, ease: "power3.inOut" }, "-=0.3")
+-    // Magnifying glass syncs exactly with letters
+-    .to(magGlass, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+-    .to(magGlass, { x: 250, duration: 1.4, ease: "none" }, "-=0.1")
+-    .to(rareLetters, {
+-      scale: 1.25,
+-      color: "var(--green)",
+-      stagger: {
+-        each: 0.35, // 1.4s duration / 4 letters = 0.35s delay each
+-        yoyo: true,
+-        repeat: 1
+-      },
+-      duration: 0.35,
+-      ease: "power1.inOut"
+-    }, "<") // Start perfectly identically with the magGlass slide
+-
+-    .to(magGlass, { autoAlpha: 0, duration: 0.3 })
+-    // Background UI bubbles
+-    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=2.0")
+-    .to({}, { duration: 0.6 })
++    // Background UI bubbles fade in (now orbiting independently)
++    .to(uiBubbles, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.1, ease: "back.out(1.5)" }, "-=0.2")
++    .to({}, { duration: 2.2 })
+     .to(uiBubbles, { autoAlpha: 0, scale: 0.5, duration: 0.5, stagger: 0.05, ease: "power3.in" })
+     .to(s2Line, { autoAlpha: 0, duration: 0.5 }, "-=0.3");
+   tl.to({}, { duration: 0.3 });
+@@ -584,7 +527,6 @@ function initStoryScroll() {
+   // ================= SCENE 3 : More content / tools / effort =================
+   tl.to(s3Lines, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.3, ease: "power3.out" })
+     .to(toolsIcons, { autoAlpha: 1, scale: 1, y: () => Math.random() * 20 - 10, x: () => Math.random() * 20 - 10, rotation: () => Math.random() * 20 - 10, duration: 0.8, stagger: 0.05, ease: "power1.out" }, "-=0.6")
+-    .to(remainingSilhouettes, { autoAlpha: 0, duration: 0.8, ease: "power2.inOut" }, "-=0.3")
+     .to({}, { duration: 0.8 })
+     .to(s3Lines, { autoAlpha: 0, duration: 0.5 });
+   tl.to({}, { duration: 0.3 });
+@@ -609,7 +551,8 @@ function initStoryScroll() {
+     .to(trendArrow, { autoAlpha: 1, duration: 0.3 }, "-=0.3")
+     // Text reveals
+     .to(s4Conclusion, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power3.out" }, "-=1.5")
+-    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "-=1.0")
++    .to(svgHighlightPaths, { autoAlpha: 1, duration: 0.01 }, "-=0.3")
++    .to(svgHighlightPaths, { strokeDashoffset: 0, duration: 0.6, ease: "power2.inOut", stagger: 0.2 }, "<")
+     .to({}, { duration: 0.8 })
+     .to(s4Conclusion, { autoAlpha: 0, duration: 0.5 })
+     .to(graphLayer, { autoAlpha: 0, duration: 0.5 }, "-=0.5");
+@@ -618,13 +561,15 @@ function initStoryScroll() {
+   // ================= SCENE 5 : Because growth today isn't effort =================
+   tl.to(s5Line, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+     .to({}, { duration: 0.5 }) // 0.5s delay
+-    // Cracks form
+-    .to(glassCracks, { autoAlpha: 1, duration: 0.3 })
+-    .to(glassCracks.querySelectorAll('path'), { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, "<")
+-    // Fragments fall
+-    .to(fragments, { autoAlpha: 1, duration: 0.1 }, "-=0.2")
+-    .to(fragments, { y: 80, x: () => Math.random() * 40 - 20, rotation: () => Math.random() * 180, autoAlpha: 0, duration: 1.0, ease: "power1.in" }, "-=0.1")
+-    .to('.word-effort', { opacity: 0.7, duration: 0.5 }, "-=0.8")
++    // Effort text shatters into persistent floating abstract shapes
++    .to(effortText, { autoAlpha: 0, duration: 0.1 })
++    .to(outerList, {
++      autoAlpha: () => Math.random() * 0.5 + 0.2,
++      x: () => (Math.random() - 0.5) * window.innerWidth * 1.5,
++      y: () => (Math.random() - 0.5) * window.innerHeight * 1.5,
++      duration: 1.5,
++      ease: "power2.out"
++    }, "<")
+     .to({}, { duration: 0.8 })
+     .to(s5Line, { autoAlpha: 0, duration: 0.5 });
+   tl.to({}, { duration: 0.3 });
+@@ -640,8 +585,8 @@ function initStoryScroll() {
+   tl.to(activationWrap, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power3.out" });
+ 
+   const isMobile = window.innerWidth < 768;
+-  const targetWidth = isMobile ? "120px" : "clamp(140px, 18vw, 240px)";
+-  const targetGap = isMobile ? "0.5rem" : "1.5rem";
++  const targetWidth = isMobile ? "140px" : "clamp(180px, 24vw, 320px)";
++  const targetGap = isMobile ? "0.8rem" : "2rem";
+ 
+   gsap.set(nodes, { autoAlpha: 0, y: 20, width: 0, margin: "0px", scale: 0.9 });
+ 
+@@ -667,13 +612,10 @@ function initStoryScroll() {
+   tl.to({}, { duration: 0.3 });
+   // ================= SCENE 7 : And we build those systems (Climax) =================
+   tl.to(weBuildLine, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" })
+-    .to({}, { duration: 0.6 }) // Wait before "we" highlight
+-    .to(weBuiltWord, { scale: 1.08, color: "var(--red)", duration: 0.2, ease: "power2.out" })
++    .to(weBuiltWord, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, "-=0.2")
+     .to({}, { duration: 0.4 }) // Hold
+-    .to(weBuiltWord, { scale: 1, color: "var(--green)", duration: 0.4, ease: "power2.inOut" })
+-    .to(weBuildLine, { autoAlpha: 0, y: -20, duration: 0.5 }, "+=0.2")
+-
+-    // Kllezo Logo Rises smoothly
++    
++    // Kllezo Logo Rises smoothly from bottom
+     .to(logoWrap, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "-=0.2")
+     .to(finalLogo, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" }, "<")
+ 
+diff --git a/pages/services.js b/pages/services.js
+index 136e9d9..83cf01b 100644
+--- a/pages/services.js
++++ b/pages/services.js
+@@ -1,110 +1,102 @@
+-// ============================================
+-// KLLEZO ΓÇö Services Page
+-// ============================================
++// Services Page Logic
+ 
+-const services = [
++const mainServices = [
+   {
+     icon: '/icon-content.svg.png',
+-    title: 'Content Creation',
+-    desc: `Attention isn't given. It's taken. We craft scroll-stopping visuals and strategic storytelling ΓÇö content engineered to spark conversations and convert silently.`,
+-    capabilities: [
+-      'Social media content strategy & creation',
+-      'Video production & motion graphics',
+-      'Brand storytelling & copywriting',
+-      'Campaign-level content systems',
+-      'Performance-driven creative testing',
+-    ],
+-    impact: 'Stories that travel further than ads.',
++    title: 'Content Creation & Management',
++    desc: `Tired of shouting into the void?\nWe engineer content that stops the scroll and starts the conversation.\nHigh-impact visuals. Razor-sharp copy.`,
++    impact: 'Your brand ΓÇö undeniable and unforgettable.',
+   },
+   {
+     icon: '/icon-website.svg.png',
+     title: 'Website Experiences',
+-    desc: `Not just websites. Digital first impressions. Fast, fluid, and conversion-focused ΓÇö built to turn curiosity into commitment.`,
+-    capabilities: [
+-      'Custom website design & development',
+-      'Landing page & funnel optimization',
+-      'E-commerce experiences',
+-      'Performance & speed optimization',
+-      'SEO-integrated architecture',
+-    ],
+-    impact: 'A website that works as hard as your business does.',
++    desc: `Templates are for amateurs.\nWe build digital headquarters that command authority.\nSeamless. Fast. Optimized for conversion.`,
++    impact: 'A digital presence that works harder than your best salesperson.',
+   },
+   {
+     icon: '/icon-ai.svg.png',
+     title: 'AI Communication Systems',
+-    desc: `Conversations that never sleep. Instant replies, intelligent follow-ups, and human-like interactions powered by automation.`,
+-    capabilities: [
+-      'AI-powered chatbots & assistants',
+-      'Automated email & WhatsApp sequences',
+-      'Lead qualification & routing',
+-      'CRM integration & sync',
+-      'Intelligent response workflows',
+-    ],
++    desc: `Conversations that never sleep.\nInstant replies. Intelligent follow-ups.\nHuman-like interactions powered by automation.`,
+     impact: 'Your business responding ΓÇö even while you sleep.',
+-  },
++  }
++];
++
++const howWeWork = [
+   {
+     icon: '/icon-growth.svg.png',
+     title: 'Growth Strategy & Consultancy',
+-    desc: `Clarity over chaos. Direction over noise. Sharp positioning and calculated moves ΓÇö growth that feels intentional, not accidental.`,
+-    capabilities: [
+-      'Market research & competitive analysis',
+-      'Brand positioning & messaging strategy',
+-      'Go-to-market planning',
+-      'Revenue growth frameworks',
+-      'Performance analytics & KPI tracking',
+-    ],
+-    impact: 'Strategy that makes every move count.',
++    desc: `Clarity over chaos. Direction over noise.\nSharp positioning. Calculated moves.\nGrowth that feels intentional ΓÇö not accidental.`,
+   },
+   {
+     icon: '/icon-workflow.svg.png',
+     title: 'Workflow Automation',
+-    desc: `Manual is outdated. Systems that connect, trigger, and execute ΓÇö silent engines running your backend at full throttle.`,
+-    capabilities: [
+-      'Business process automation',
+-      'Tool & platform integrations',
+-      'Automated reporting & dashboards',
+-      'Task routing & approval workflows',
+-      'Custom API-driven automation',
+-    ],
+-    impact: 'Your operations ΓÇö finally on autopilot.',
+-  },
++    desc: `Manual is outdated.\nSystems that connect, trigger, and execute.\nSilent engines running your backend at full throttle.`,
++  }
+ ];
+ 
+ export function renderServices() {
+-  const blocksHTML = services
+-    .map(
+-      (s, i) => `
+-    <div class="service-block" data-index="${i}">
+-      <div class="service-block__inner">
+-        <div class="service-block__icon-col">
+-          <div class="service-block__icon">
+-            <img src="${s.icon}" alt="${s.title}" />
++  return `
++    <div class="page-transition-overlay" id="pageTransitionOverlay"></div>
++    <div class="cursor-wings"></div>
++    <canvas id="cursorTrails"></canvas>
++
++    <div class="noise-overlay"></div>
++
++    <nav class="nav">
++      <div class="nav-left">
++        <a href="#/" class="nav-logo">Kllezo</a>
++      </div>
++      <div class="nav-links">
++        <a href="#/">Home</a>
++        <a href="#/services" class="active">Services</a>
++        <a href="#/about">About</a>
++        <a href="#/contact" class="btn btn--primary">Get Started</a>
++      </div>
++    </nav>
++
++    <main class="page-content" style="padding-top: 20vh;">
++      <section class="services-hero text-center" style="margin-bottom: 10vh; padding: 0 var(--page-pad);">
++        <h1 class="page-title" style="font-size: clamp(3rem, 6vw, 6rem);">Growth is a System.</h1>
++        <p class="page-subtitle" style="color: var(--grey); font-size: 1.2rem; margin-top: 1rem;">We build the infrastructure for scalable digital dominance.</p>
++      </section>
++
++      <section class="services-list" id="servicesList">
++        ${mainServices.map((s, i) => `
++          <div class="service-glass-tab" data-index="${i}">
++            <div class="glass-tab-header">
++               <img src="${s.icon}" alt="${s.title}" class="glass-tab-icon" />
++               <h2>${s.title}</h2>
++               <div class="glass-tab-arrow">∩╝ï</div>
++            </div>
++            <div class="glass-tab-content">
++               <p class="service-desc">${s.desc.replace(/\n/g, '<br>')}</p>
++               <h4 class="service-impact">${s.impact}</h4>
++            </div>
+           </div>
++        `).join('')}
++      </section>
++
++      <section class="how-we-work-section" id="howWeWorkSection" style="margin-top: 15vh;">
++        <h2 class="section-title text-center" style="margin-bottom: 3rem; color: var(--green); font-size: clamp(2.5rem, 5vw, 4rem);">How We Work</h2>
++        <div class="hww-grid">
++           ${howWeWork.map(w => `
++              <div class="hww-card">
++                 <img src="${w.icon}" alt="${w.title}" class="hww-icon"/>
++                 <h3>${w.title}</h3>
++                 <p>${w.desc.replace(/\n/g, '<br>')}</p>
++              </div>
++           `).join('')}
+         </div>
+-        <div class="service-block__text-col">
+-          <h3 class="service-block__title">${s.title}</h3>
+-          <p class="service-block__desc body-text">${s.desc}</p>
+-          <ul class="service-block__capabilities">
+-            ${s.capabilities.map((c) => `<li>${c}</li>`).join('')}
+-          </ul>
+-          <p class="impact-line">${s.impact}</p>
+-        </div>
+-      </div>
+-    </div>
+-  `
+-    )
+-    .join('');
++      </section>
+ 
+-  return `
+-    <div class="services-page__hero">
+-      <h1 class="reveal">What We Build</h1>
+-      <p class="tagline reveal reveal-delay-1">Systems, stories, and strategies ΓÇö engineered for growth.</p>
+-    </div>
+-    ${blocksHTML}
+-    <section class="cta-section">
+-      <h2 class="reveal">Let's build your growth engine.</h2>
+-      <a href="#/contact" class="btn btn--primary reveal reveal-delay-1">Connect Now</a>
+-    </section>
++      <!-- Services CTA -->
++      <section class="services-cta cta-wavy" style="margin-top: 15vh; padding: 4rem 10vw; text-align: center; background: rgba(9,69,62,0.03); position: relative;">
++        <h2 style="font-size: clamp(2rem, 4vw, 3.5rem); color: var(--green); margin-bottom: 2rem;">Ready to upgrade your system?</h2>
++        <a href="#/contact" class="btn btn--primary btn-magnetic btn--massive" id="ctaBtn" style="position: relative; z-index: 10;">Let's Grow</a>
++      </section>
++    </main>
++
++    <!-- Footer -->
+     <footer class="footer">
+       <div class="footer__inner">
+         <div class="footer__main">
+@@ -141,45 +133,89 @@ export function renderServices() {
+ }
+ 
+ export function initServices() {
+-  const blocks = document.querySelectorAll('.service-block');
+-
+-  blocks.forEach((block, index) => {
+-    const isEven = index % 2 !== 0; // The second block (index 1) is visually even based on CSS nth-child
+-
+-    const iconCol = block.querySelector('.service-block__icon-col');
+-    const icon = block.querySelector('.service-block__icon img');
+-    const textElements = block.querySelectorAll('.service-block__title, .service-block__desc, .service-block__capabilities li, .impact-line');
+-
+-    const tl = gsap.timeline({
++  const tabs = gsap.utils.toArray('.service-glass-tab');
++  
++  // Stagger entry
++  if (tabs.length) {
++    gsap.from(tabs, {
++      y: 50,
++      opacity: 0,
++      duration: 0.8,
++      stagger: 0.2,
++      ease: "power3.out",
+       scrollTrigger: {
+-        trigger: block,
+-        start: 'top 80%',
+-        once: true,
++        trigger: '#servicesList',
++        start: "top 80%",
+       }
+     });
++  }
++
++  // Hover and Click interactions
++  tabs.forEach(tab => {
++     const content = tab.querySelector('.glass-tab-content');
++     const arrow = tab.querySelector('.glass-tab-arrow');
++     
++     // Hover
++     tab.addEventListener('mouseenter', () => {
++         if (!tab.classList.contains('active')) {
++             gsap.to(tab, { scale: 1.02, boxShadow: '0 10px 40px rgba(9, 69, 62, 0.1)', borderColor: 'rgba(9, 69, 62, 0.3)', duration: 0.3 });
++         }
++     });
++     tab.addEventListener('mouseleave', () => {
++         if (!tab.classList.contains('active')) {
++             gsap.to(tab, { scale: 1, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)', borderColor: 'rgba(255, 255, 255, 0.6)', duration: 0.3 });
++         }
++     });
+ 
+-    // Alternating slide direction
+-    const iconX = isEven ? 60 : -60;
+-    const textX = isEven ? -60 : 60;
+-
+-    // Slide in wrappers
+-    tl.fromTo(iconCol,
+-      { x: iconX, opacity: 0 },
+-      { x: 0, opacity: 1, duration: 0.9, ease: 'power3.out' }
+-    );
+-
+-    // Icon pop and slight rotate
+-    tl.fromTo(icon,
+-      { scale: 0.9, rotation: isEven ? -5 : 5 },
+-      { scale: 1, rotation: 0, duration: 1.2, ease: 'elastic.out(1, 0.5)' },
+-      '-=0.7'
+-    );
+-
+-    // Stagger text lines with fade and translateY
+-    tl.fromTo(textElements,
+-      { opacity: 0, y: 15, x: textX },
+-      { opacity: 1, y: 0, x: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out' },
+-      '-=1.0'
+-    );
++     // Click to expand
++     gsap.set(content, { height: 0, opacity: 0, overflow: 'hidden' });
++     tab.addEventListener('click', () => {
++         const isActive = tab.classList.contains('active');
++         
++         // Close all others
++         tabs.forEach(t => {
++             t.classList.remove('active');
++             gsap.to(t, { scale: 1, boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)', borderColor: 'rgba(255, 255, 255, 0.6)', duration: 0.3 });
++             gsap.to(t.querySelector('.glass-tab-content'), { height: 0, opacity: 0, duration: 0.4, ease: "power2.inOut" });
++             gsap.to(t.querySelector('.glass-tab-arrow'), { rotation: 0, duration: 0.3 });
++         });
++
++         if (!isActive) {
++             tab.classList.add('active');
++             gsap.to(tab, { scale: 1.05, boxShadow: '0 15px 50px rgba(9, 69, 62, 0.15)', borderColor: 'rgba(9, 69, 62, 0.8)', duration: 0.4, ease: "power3.out" });
++             gsap.to(content, { height: 'auto', opacity: 1, duration: 0.5, ease: "power2.inOut" });
++             gsap.to(arrow, { rotation: 45, duration: 0.4, ease: "back.out(2)" });
++         }
++     });
+   });
++  
++  // HWW entry
++  const hwwCards = gsap.utils.toArray('.hww-card');
++  if (hwwCards.length) {
++    gsap.from(hwwCards, {
++        y: 40, opacity: 0, stagger: 0.2, duration: 0.8, ease: "power2.out",
++        scrollTrigger: {
++            trigger: '#howWeWorkSection',
++            start: "top 85%"
++        }
++    });
++  }
++
++  // Simple magnetic button init for CTA
++  const ctaBtn = document.getElementById('ctaBtn');
++  if (ctaBtn) {
++    ctaBtn.addEventListener('mousemove', (e) => {
++      const rect = ctaBtn.getBoundingClientRect();
++      const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
++      const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
++      gsap.to(ctaBtn, { x, y, duration: 0.3, ease: 'power2.out' });
++    });
++    ctaBtn.addEventListener('mouseleave', () => {
++      gsap.to(ctaBtn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
++    });
++  }
++}
++
++export function destroyServices() {
++  // handled globally
+ }
+diff --git a/people.png b/people.png
+deleted file mode 100644
+index 3ca3b4a..0000000
+Binary files a/people.png and /dev/null differ
+diff --git a/peoplee.png b/peoplee.png
+deleted file mode 100644
+index bc155e5..0000000
+Binary files a/peoplee.png and /dev/null differ
+diff --git a/public/icon-ai.svg b/public/icon-ai.svg
+deleted file mode 100644
+index 7c6a25a..0000000
+--- a/public/icon-ai.svg
++++ /dev/null
+@@ -1,7 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#09453e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+-  <!-- AI / chat brain icon -->
+-  <path d="M60 16C36 16 16 32 16 52c0 12 8 22 20 28l-4 20 18-12c3.2.8 6.5 1.2 10 1.2 24 0 44-16 44-37.2C104 32 84 16 60 16z"/>
+-  <circle cx="42" cy="52" r="4" fill="#09453e" stroke="none"/>
+-  <circle cx="60" cy="52" r="4" fill="#09453e" stroke="none"/>
+-  <circle cx="78" cy="52" r="4" fill="#09453e" stroke="none"/>
+-</svg>
+diff --git a/public/icon-content.svg b/public/icon-content.svg
+deleted file mode 100644
+index feea47b..0000000
+--- a/public/icon-content.svg
++++ /dev/null
+@@ -1,9 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#09453e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+-  <!-- Pencil / creative content icon -->
+-  <rect x="20" y="20" width="80" height="80" rx="8"/>
+-  <line x1="36" y1="42" x2="84" y2="42"/>
+-  <line x1="36" y1="56" x2="72" y2="56"/>
+-  <line x1="36" y1="70" x2="60" y2="70"/>
+-  <circle cx="78" cy="78" r="8"/>
+-  <path d="M74 74l-6-6"/>
+-</svg>
+diff --git a/public/icon-growth.svg b/public/icon-growth.svg
+deleted file mode 100644
+index 8d5e96a..0000000
+--- a/public/icon-growth.svg
++++ /dev/null
+@@ -1,7 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#09453e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+-  <!-- Growth / chart arrow icon -->
+-  <polyline points="20,90 44,60 64,72 100,28"/>
+-  <polyline points="76,28 100,28 100,52"/>
+-  <line x1="20" y1="100" x2="100" y2="100"/>
+-  <line x1="20" y1="28" x2="20" y2="100"/>
+-</svg>
+diff --git a/public/icon-website.svg b/public/icon-website.svg
+deleted file mode 100644
+index 0465c78..0000000
+--- a/public/icon-website.svg
++++ /dev/null
+@@ -1,12 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#09453e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+-  <!-- Browser / website icon -->
+-  <rect x="16" y="24" width="88" height="72" rx="8"/>
+-  <line x1="16" y1="42" x2="104" y2="42"/>
+-  <circle cx="28" cy="33" r="3" fill="#09453e" stroke="none"/>
+-  <circle cx="38" cy="33" r="3" fill="#09453e" stroke="none"/>
+-  <circle cx="48" cy="33" r="3" fill="#09453e" stroke="none"/>
+-  <rect x="28" y="52" width="24" height="16" rx="2"/>
+-  <line x1="28" y1="78" x2="92" y2="78"/>
+-  <line x1="28" y1="86" x2="68" y2="86"/>
+-  <rect x="64" y="52" width="28" height="32" rx="2"/>
+-</svg>
+diff --git a/public/icon-workflow.svg b/public/icon-workflow.svg
+deleted file mode 100644
+index d5363b1..0000000
+--- a/public/icon-workflow.svg
++++ /dev/null
+@@ -1,12 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#09453e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+-  <!-- Workflow / gears connected icon -->
+-  <circle cx="36" cy="40" r="14"/>
+-  <circle cx="36" cy="40" r="5" fill="#09453e" stroke="none"/>
+-  <circle cx="84" cy="40" r="14"/>
+-  <circle cx="84" cy="40" r="5" fill="#09453e" stroke="none"/>
+-  <circle cx="60" cy="84" r="14"/>
+-  <circle cx="60" cy="84" r="5" fill="#09453e" stroke="none"/>
+-  <line x1="48" y1="46" x2="72" y2="46"/>
+-  <line x1="44" y1="52" x2="52" y2="72"/>
+-  <line x1="76" y1="52" x2="68" y2="72"/>
+-</svg>
+diff --git a/public/logo-kllezo.svg b/public/logo-kllezo.svg
+deleted file mode 100644
+index ea7a709..0000000
+--- a/public/logo-kllezo.svg
++++ /dev/null
+@@ -1,16 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none">
+-  <g fill="#09453e">
+-    <!-- K -->
+-    <path d="M12 16h8v20l18-20h10L28 38l22 26H39L20 40v24h-8V16z"/>
+-    <!-- L -->
+-    <path d="M58 16h8v40h22v8H58V16z"/>
+-    <!-- L -->
+-    <path d="M96 16h8v40h22v8H96V16z"/>
+-    <!-- E -->
+-    <path d="M134 16h30v8h-22v12h18v8h-18v12h22v8h-30V16z"/>
+-    <!-- Z -->
+-    <path d="M174 16h30v8l-22 32h22v8h-30v-8l22-32h-22V16z"/>
+-    <!-- O -->
+-    <path d="M228 15c13.255 0 24 10.745 24 24v2c0 13.255-10.745 24-24 24s-24-10.745-24-24v-2c0-13.255 10.745-24 24-24zm0 8c-8.837 0-16 7.163-16 16v2c0 8.837 7.163 16 16 16s16-7.163 16-16v-2c0-8.837-7.163-16-16-16z"/>
+-  </g>
+-</svg>
+diff --git a/style.css b/style.css
+index 8505640..eadc797 100644
+--- a/style.css
++++ b/style.css
+@@ -280,9 +280,9 @@ h4 {
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 var(--page-pad);
+-    background: rgba(251, 245, 233, 0.85);
+-    backdrop-filter: blur(20px);
+-    -webkit-backdrop-filter: blur(20px);
++    background: transparent;
++    backdrop-filter: blur(8px);
++    -webkit-backdrop-filter: blur(8px);
+     transition: transform 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+ }
+ 
+@@ -701,38 +701,72 @@ h4 {
+     z-index: 25;
+ }
+ 
+-/* Silhouettes */
+-.silhouette-wrap {
++/* --- Scene 1 Crowded Image Masking Trick --- */
++.scene-1-crowd-wrapper {
+     position: absolute;
+-    bottom: -10vh;
+-    opacity: 0;
+-    transform: translateY(15vh);
+-    will-change: transform, opacity;
++    top: 0;
++    left: 0;
++    width: 100%;
++    height: 100%;
++    pointer-events: none;
++    z-index: 10;
+ }
+ 
+-.idle-float {
+-    animation: idleFloat 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+-    animation-delay: var(--idle-del);
++.crowd-illustration {
++    position: absolute;
++    top: 0;
++    left: 0;
++    width: 100%;
++    height: 100%;
++    background-image: url('/people.png');
++    background-size: cover;
++    background-position: center bottom;
++    background-repeat: no-repeat;
++    mix-blend-mode: multiply;
++    /* makes white phones/eyes transparent holes */
++    pointer-events: none;
++    z-index: 5;
+ }
+ 
+-@keyframes idleFloat {
+-    0% {
+-        transform: translateY(0) rotate(0deg);
+-    }
++.crowd-interact-layer {
++    position: absolute;
++    top: 0;
++    left: 0;
++    width: 100%;
++    height: 100%;
++    pointer-events: none;
++    z-index: 2;
++    /* Behind image, shows through transparent multiply holes */
++}
+ 
+-    100% {
+-        transform: translateY(-4px) rotate(1deg);
+-    }
++.interactive-glow {
++    position: absolute;
++    pointer-events: none;
++    transform-origin: center center;
++}
++
++/* The phone glows are rects behind the phone cutouts */
++.interactive-phone {
++    width: clamp(20px, 2.5vw, 60px);
++    height: clamp(35px, 4vw, 100px);
++    margin-left: clamp(-10px, -1.25vw, -30px);
++    margin-top: clamp(-15px, -2vw, -50px);
++    display: flex;
++    justify-content: center;
++    align-items: center;
+ }
+ 
+-.silhouette-wrap svg {
++.phone-screen-glow {
+     width: 100%;
+-    height: auto;
+-    filter: drop-shadow(0 -5px 15px rgba(0, 0, 0, 0.15));
++    height: 100%;
++    background: #eafffa;
++    border-radius: 4px;
++    box-shadow: 0 0 15px rgba(220, 255, 240, 0.8);
+ }
+ 
+ .phone-pulse {
+-    animation: phonePulse var(--pulse-wait) ease-in-out infinite;
++    animation: phonePulse 6s ease-in-out infinite;
++    animation-delay: var(--pulse-wait);
+ }
+ 
+ @keyframes phonePulse {
+@@ -740,30 +774,30 @@ h4 {
+     0%,
+     95%,
+     100% {
+-        opacity: 0;
++        opacity: 0.2;
+     }
+ 
+     97.5% {
+-        opacity: 0.8;
++        opacity: 1;
+     }
+ }
+ 
+-.async-blink {
+-    transform-origin: 50px 35px;
+-    animation: eyeBlink var(--blink-del) linear infinite;
++/* The eyes are white ellipses behind the eye cutouts */
++.interactive-eye {
++    width: clamp(20px, 3vw, 60px);
++    height: clamp(10px, 1.5vw, 30px);
++    margin-left: clamp(-10px, -1.5vw, -30px);
++    margin-top: clamp(-5px, -0.75vw, -15px);
++    display: flex;
++    align-items: center;
++    justify-content: center;
+ }
+ 
+-@keyframes eyeBlink {
+-
+-    0%,
+-    96%,
+-    100% {
+-        transform: scaleY(1);
+-    }
+-
+-    98% {
+-        transform: scaleY(0.1);
+-    }
++.eye-glow {
++    width: 100%;
++    height: 100%;
++    background: #ffffff;
++    border-radius: 50%;
+ }
+ 
+ /* Bubbles & Popups */
+@@ -818,8 +852,8 @@ h4 {
+ /* Scene 2 Magnifier */
+ .mag-glass {
+     position: absolute;
+-    width: clamp(120px, 18vw, 220px);
+-    height: clamp(120px, 18vw, 220px);
++    width: clamp(55px, 10vw, 140px);
++    height: clamp(55px, 10vw, 140px);
+     border: 3px solid rgba(255, 255, 255, 0.4);
+     border-radius: 50%;
+     background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.15) 100%);
+@@ -1265,8 +1299,8 @@ h4 {
+     top: 35%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+-    width: clamp(100px, 15vw, 180px);
+-    height: clamp(100px, 15vw, 180px);
++    width: clamp(140px, 20vw, 250px);
++    height: clamp(140px, 20vw, 250px);
+     background: radial-gradient(circle, rgba(9, 69, 62, 0.08) 0%, transparent 70%);
+     border-radius: 50%;
+     z-index: 2;
+@@ -1280,8 +1314,8 @@ h4 {
+ }
+ 
+ .activation-node__icon {
+-    width: clamp(80px, 12vw, 160px);
+-    height: clamp(80px, 12vw, 160px);
++    width: clamp(110px, 16vw, 220px);
++    height: clamp(110px, 16vw, 220px);
+     margin-bottom: 2rem;
+     position: relative;
+     z-index: 3;
+@@ -1301,7 +1335,7 @@ h4 {
+ }
+ 
+ .activation-node__label {
+-    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
++    font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+     font-weight: 600;
+     color: var(--green);
+     opacity: 0;
+@@ -1311,12 +1345,12 @@ h4 {
+ /* Spark Effect */
+ .spark-effect {
+     position: absolute;
+-    top: clamp(40px, 6vw, 80px);
++    top: clamp(55px, 8vw, 110px);
+     /* Center of the icon */
+     left: 50%;
+     transform: translate(-50%, -50%) scale(0);
+-    width: clamp(120px, 18vw, 240px);
+-    height: clamp(120px, 18vw, 240px);
++    width: clamp(160px, 24vw, 320px);
++    height: clamp(160px, 24vw, 320px);
+     background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0.8) 20%, rgba(9, 69, 62, 0.4) 50%, transparent 70%);
+     border-radius: 50%;
+     pointer-events: none;
+@@ -1476,104 +1510,120 @@ h4 {
+ }
+ 
+ /* ============================================
+-   SERVICES PAGE
++   SERVICES PAGE: GLASS TABS
+    ============================================ */
+ 
+-.services-page__hero {
+-    width: 85%;
+-    max-width: 1600px;
++.services-hero {
++    margin-bottom: clamp(3rem, 6vh, 5rem);
++}
++
++.services-list {
++    display: flex;
++    flex-direction: column;
++    gap: 1.5rem;
++    max-width: 900px;
+     margin: 0 auto;
+-    padding-top: calc(var(--nav-height) + clamp(4rem, 10vh, 8rem));
+-    text-align: center;
+-    padding-bottom: clamp(3rem, 6vh, 5rem);
++    padding: 0 var(--page-pad);
+ }
+ 
+-.service-block {
+-    padding: clamp(5rem, 10vh, 8rem) 0;
+-    border-top: 1px solid rgba(9, 69, 62, 0.06);
++.service-glass-tab {
++    background: rgba(255, 255, 255, 0.4);
++    backdrop-filter: blur(16px);
++    -webkit-backdrop-filter: blur(16px);
++    border: 1px solid rgba(255, 255, 255, 0.6);
++    border-radius: 16px;
++    padding: 1.5rem 2rem;
++    cursor: pointer;
++    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
++    transition: all 0.3s ease;
++    transform-origin: center center;
+ }
+ 
+-.service-block__inner {
+-    width: 85%;
+-    max-width: 1600px;
+-    margin: 0 auto;
+-    padding: 0;
+-    display: grid;
+-    grid-template-columns: 1fr 1.15fr;
+-    /* Icon left, Text right */
+-    gap: clamp(4rem, 8vw, 8rem);
++.glass-tab-header {
++    display: flex;
+     align-items: center;
++    gap: 1.5rem;
+ }
+ 
+-.service-block__text-col {
+-    order: 2;
++.glass-tab-icon {
++    width: 60px;
++    height: 60px;
++    object-fit: contain;
+ }
+ 
+-.service-block__icon-col {
+-    order: 1;
+-    display: flex;
+-    align-items: center;
+-    justify-content: center;
++.glass-tab-header h2 {
++    font-size: clamp(1.2rem, 2vw, 1.8rem);
++    color: var(--text-dark);
++    margin: 0;
++    flex-grow: 1;
+ }
+ 
+-/* Alternating layout (Even matches the FIRST service block in DOM) */
+-.service-block:nth-child(even) .service-block__inner {
+-    grid-template-columns: 1.15fr 1fr;
+-    /* Text left, Icon right */
++.glass-tab-arrow {
++    font-size: 2rem;
++    color: var(--green);
++    font-weight: 300;
++    transform-origin: center;
+ }
+ 
+-.service-block:nth-child(even) .service-block__icon-col {
+-    order: 2;
++.glass-tab-content {
++    padding-left: calc(60px + 1.5rem);
++    padding-top: 1rem;
+ }
+ 
+-.service-block:nth-child(even) .service-block__text-col {
+-    order: 1;
++.service-desc {
++    font-size: 1.1rem;
++    color: var(--grey);
++    line-height: 1.6;
++    margin-bottom: 1.5rem;
+ }
+ 
+-.service-block__icon {
+-    width: clamp(200px, 35vw, 600px);
+-    height: clamp(200px, 35vw, 600px);
++.service-impact {
++    font-size: 1.1rem;
++    color: var(--green);
++    font-weight: 700;
+ }
+ 
+-.service-block__icon img {
+-    width: 100%;
+-    height: 100%;
+-    object-fit: contain;
++/* ============================================
++   HOW WE WORK SECTION
++   ============================================ */
++
++.how-we-work-section {
++    padding: clamp(3rem, 6vh, 5rem) var(--page-pad);
++    background: transparent;
+ }
+ 
+-.service-block__title {
+-    margin-bottom: 1.25rem;
++.hww-grid {
++    display: grid;
++    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
++    gap: 2rem;
++    max-width: 1000px;
++    margin: 0 auto;
+ }
+ 
+-.service-block__desc {
+-    margin-bottom: 1.5rem;
+-    line-height: 1.8;
+-    color: var(--text);
+-    font-size: clamp(0.95rem, 1.4vw, 1.1rem);
++.hww-card {
++    background: rgba(251, 245, 233, 0.5);
++    border: 1px solid rgba(9, 69, 62, 0.1);
++    border-radius: 16px;
++    padding: 2.5rem 2rem;
++    text-align: center;
+ }
+ 
+-.service-block__capabilities {
+-    margin-bottom: 1.5rem;
++.hww-icon {
++    width: 80px;
++    height: 80px;
++    margin: 0 auto 1.5rem;
++    object-fit: contain;
+ }
+ 
+-.service-block__capabilities li {
+-    padding: 0.5rem 0;
+-    padding-left: 1.25rem;
+-    position: relative;
+-    color: var(--text);
+-    font-size: clamp(0.9rem, 1.2vw, 1rem);
++.hww-card h3 {
++    color: var(--green);
++    font-size: 1.3rem;
++    margin-bottom: 1rem;
+ }
+ 
+-.service-block__capabilities li::before {
+-    content: '';
+-    position: absolute;
+-    left: 0;
+-    top: 0.85rem;
+-    width: 6px;
+-    height: 6px;
+-    border-radius: 50%;
+-    background: var(--green);
+-    opacity: 0.5;
++.hww-card p {
++    color: var(--grey);
++    line-height: 1.5;
+ }
+ 
+ /* ============================================
